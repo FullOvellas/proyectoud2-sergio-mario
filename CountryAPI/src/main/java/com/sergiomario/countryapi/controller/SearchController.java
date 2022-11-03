@@ -10,9 +10,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 
 import java.net.URL;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -76,8 +79,6 @@ public class SearchController implements Initializable {
             if(modoBusqueda == 0 ) {
 
                 lastResult = CountryFetcher.searchCountriesByName(rawBusqueda);
-                resultsTbl.setItems(FXCollections.observableArrayList(lastResult));
-
 
             } else if(modoBusqueda == 1 ) {
 
@@ -92,6 +93,8 @@ public class SearchController implements Initializable {
                 lastResult = CountryFetcher.searchCountriesByCapital(rawBusqueda);
 
             }
+
+            resultsTbl.setItems(FXCollections.observableArrayList(lastResult));
 
             viewIndex = 0;
 
@@ -139,6 +142,27 @@ public class SearchController implements Initializable {
         } else {
 
             viewIndex--;
+
+        }
+
+    }
+
+    @FXML
+    private void onTableClick(MouseEvent event) {
+
+        if(event.getClickCount() == 2 ) {
+
+            int index = resultsTbl.getSelectionModel().getSelectedIndex();
+
+            showCountry(lastResult.get(index));
+
+            btnSiguiente.setDisable(false);
+            btnAnterior.setDisable(false);
+
+            btnSiguiente.setDisable( index == (lastResult.size() - 1) );
+            btnAnterior.setDisable( index == 0);
+
+            viewIndex = index;
 
         }
 
@@ -261,6 +285,20 @@ public class SearchController implements Initializable {
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         TableColumn<Country, Integer> popCol = new TableColumn<>("Población");
         popCol.setCellValueFactory(new PropertyValueFactory<>("population"));
+        NumberFormat formatNum = NumberFormat.getNumberInstance(Locale.getDefault());
+
+        popCol.setCellFactory(tc -> new TableCell<Country, Integer>() {
+
+            @Override
+            protected void updateItem(Integer pop, boolean empty) {
+                super.updateItem(pop, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(formatNum.format(pop));
+                }
+            }
+        });
 
         resultsTbl.getColumns().addAll(nameCol, popCol);
         resultsTbl.getSortOrder().add(popCol);
