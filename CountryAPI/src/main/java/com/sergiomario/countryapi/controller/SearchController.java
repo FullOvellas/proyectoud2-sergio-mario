@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 
 import java.net.URL;
 import java.text.NumberFormat;
@@ -78,8 +79,6 @@ public class SearchController implements Initializable {
             if(modoBusqueda == 0 ) {
 
                 lastResult = CountryFetcher.searchCountriesByName(rawBusqueda);
-                resultsTbl.setItems(FXCollections.observableArrayList(lastResult));
-
 
             } else if(modoBusqueda == 1 ) {
 
@@ -94,6 +93,8 @@ public class SearchController implements Initializable {
                 lastResult = CountryFetcher.searchCountriesByCapital(rawBusqueda);
 
             }
+
+            resultsTbl.setItems(FXCollections.observableArrayList(lastResult));
 
             viewIndex = 0;
 
@@ -141,6 +142,27 @@ public class SearchController implements Initializable {
         } else {
 
             viewIndex--;
+
+        }
+
+    }
+
+    @FXML
+    private void onTableClick(MouseEvent event) {
+
+        if(event.getClickCount() == 2 ) {
+
+            int index = resultsTbl.getSelectionModel().getSelectedIndex();
+
+            showCountry(lastResult.get(index));
+
+            btnSiguiente.setDisable(false);
+            btnAnterior.setDisable(false);
+
+            btnSiguiente.setDisable( index == (lastResult.size() - 1) );
+            btnAnterior.setDisable( index == 0);
+
+            viewIndex = index;
 
         }
 

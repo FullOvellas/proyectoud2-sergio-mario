@@ -40,6 +40,6 @@
       <Button fx:id="btnAnterior" layoutX="552.0" layoutY="565.0" mnemonicParsing="false" onAction="#onAnteriorButtonClick" text="Anterior" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="97.0" />
       <Button fx:id="btnSiguiente" layoutX="629.0" layoutY="565.0" mnemonicParsing="false" onAction="#onSiguienteButtonClick" text="Siguiente" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="15.0" />
       <Label fx:id="lblNoEncontrado" layoutX="201.0" layoutY="59.0" text="No se ha encontrado en la API" textFill="RED" visible="false" />
-      <TableView fx:id="resultsTbl" layoutX="32.0" layoutY="300.0" prefHeight="192.0" prefWidth="392.0" />
+      <TableView fx:id="resultsTbl" layoutX="32.0" layoutY="300.0" prefHeight="192.0" prefWidth="392.0" onMouseClicked="#onTableClick" />
    </children>
 </AnchorPane>
