@@ -76,8 +76,6 @@ public class SearchController implements Initializable {
             if(modoBusqueda == 0 ) {
 
                 lastResult = CountryFetcher.searchCountriesByName(rawBusqueda);
-                resultsTbl.setItems(FXCollections.observableArrayList(lastResult));
-
 
             } else if(modoBusqueda == 1 ) {
 
@@ -92,6 +90,8 @@ public class SearchController implements Initializable {
                 lastResult = CountryFetcher.searchCountriesByCapital(rawBusqueda);
 
             }
+
+            resultsTbl.setItems(FXCollections.observableArrayList(lastResult));
 
             viewIndex = 0;
 
