@@ -12,7 +12,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.net.URL;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -261,6 +263,20 @@ public class SearchController implements Initializable {
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         TableColumn<Country, Integer> popCol = new TableColumn<>("Población");
         popCol.setCellValueFactory(new PropertyValueFactory<>("population"));
+        NumberFormat formatNum = NumberFormat.getNumberInstance(Locale.getDefault());
+
+        popCol.setCellFactory(tc -> new TableCell<Country, Integer>() {
+
+            @Override
+            protected void updateItem(Integer pop, boolean empty) {
+                super.updateItem(pop, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(formatNum.format(pop));
+                }
+            }
+        });
 
         resultsTbl.getColumns().addAll(nameCol, popCol);
         resultsTbl.getSortOrder().add(popCol);
