@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.1-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sergiomario.countryapi.controller.MenuController">
+   <children>
+      <HBox layoutX="62.0" layoutY="63.0" spacing="25.0" AnchorPane.leftAnchor="62.0" AnchorPane.rightAnchor="176.95123514557451">
+         <children>
+            <Button mnemonicParsing="false" onAction="#onBotonBusquedaClick" prefHeight="45.0" prefWidth="145.0" text="Busqueda" />
+            <Label alignment="CENTER" text="Para hacer consultas con la API">
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </Label>
+         </children>
+      </HBox>
+      <HBox layoutX="62.0" layoutY="186.0" spacing="25.0" AnchorPane.leftAnchor="62.0" AnchorPane.rightAnchor="176.95123514557451">
+         <children>
+            <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="145.0" text="Juego banderas" onAction="#onBotonBanderasClick" />
+            <Label alignment="CENTER" text="Juego de adivinar banderas">
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </Label>
+         </children>
+      </HBox>
+      <HBox layoutX="62.0" layoutY="315.0" spacing="25.0" AnchorPane.leftAnchor="62.0" AnchorPane.rightAnchor="176.95123514557451">
+         <children>
+            <Button mnemonicParsing="false" prefHeight="46.0" prefWidth="145.0" text="Juego poblaciones" onAction="#onBotonPoblacionesClick" />
+            <Label alignment="CENTER" text="Juego de adivinar poblaciones">
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </Label>
+         </children>
+      </HBox>
+      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#onBotonSalidaClick" prefHeight="32.0" prefWidth="32.0" text="&lt;" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
+   </children>
+</AnchorPane>

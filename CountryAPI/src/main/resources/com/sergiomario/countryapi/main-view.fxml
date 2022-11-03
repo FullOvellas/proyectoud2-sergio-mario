@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane centerShape="false" prefHeight="500.0" prefWidth="709.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sergiomario.countryapi.controller.MainController">
+    <children>
+        <Label fx:id="lblAppTitle" contentDisplay="CENTER" layoutX="310.0" layoutY="53.0" minHeight="-Infinity" minWidth="149.0" prefHeight="33.0" prefWidth="149.0" text="CountryAPI" textAlignment="CENTER">
+            <font>
+                <Font name="Cantarell Regular" size="26.0" />
+            </font>
+        </Label>
+      <TextField fx:id="txtUsuario" layoutX="304.0" layoutY="126.0" AnchorPane.leftAnchor="304.0" AnchorPane.rightAnchor="243.0" />
+      <PasswordField fx:id="txtPassword" layoutX="304.0" layoutY="186.0" AnchorPane.leftAnchor="304.0" AnchorPane.rightAnchor="243.0" />
+      <Label layoutX="206.0" layoutY="130.0" text="Usuario:" AnchorPane.leftAnchor="206.0" AnchorPane.rightAnchor="451.0" />
+      <Label layoutX="206.0" layoutY="190.0" text="Contraseña:" AnchorPane.leftAnchor="206.0" AnchorPane.rightAnchor="429.0" />
+      <Button layoutX="355.0" layoutY="290.0" mnemonicParsing="false" onAction="#onLoginClick" text="Login" AnchorPane.leftAnchor="355.0" AnchorPane.rightAnchor="301.0" />
+      <Separator layoutX="160.0" layoutY="95.0" prefHeight="5.0" prefWidth="391.0" AnchorPane.leftAnchor="160.0" AnchorPane.rightAnchor="158.0" />
+      <Separator layoutX="160.0" layoutY="259.0" prefHeight="5.0" prefWidth="391.0" AnchorPane.leftAnchor="160.0" AnchorPane.rightAnchor="158.0" />
+      <Label fx:id="lblWrongPassword" layoutX="260.0" layoutY="230.0" text="El usuario o contraseña no son correctos" textFill="#ef1919" visible="false" />
+      <Button fx:id="btnDescarga" accessibleText="Click para descargar en cache la API" layoutX="619.0" layoutY="452.0" mnemonicParsing="false" onAction="#onDescargarButtonClick" text="Descargar" AnchorPane.bottomAnchor="23.0" AnchorPane.rightAnchor="21.0" />
+    </children>
+</AnchorPane>

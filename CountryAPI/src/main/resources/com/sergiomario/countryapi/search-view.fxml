@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="600.0" prefWidth="709.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sergiomario.countryapi.controller.SearchController">
+   <children>
+      <HBox layoutX="14.0" layoutY="13.0" spacing="10.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#onExitButtonClick" prefHeight="32.0" prefWidth="32.0" text="&lt;" />
+            <TextField fx:id="txtBusqueda" prefHeight="32.0" prefWidth="279.0" />
+            <ChoiceBox fx:id="cbCampoBusqueda" prefHeight="31.0" prefWidth="153.0" />
+            <Button mnemonicParsing="false" onAction="#onBotonBuscarClick" prefHeight="30.0" prefWidth="66.0" text="Buscar" />
+         </children>
+      </HBox>
+      <ImageView fx:id="imgBandera" fitHeight="41.0" fitWidth="66.0" layoutX="511.0" layoutY="77.0" pickOnBounds="true" preserveRatio="true" />
+      <HBox layoutX="32.0" layoutY="77.0" spacing="25.0">
+         <children>
+            <VBox spacing="25.0">
+               <children>
+                  <Label text="Nombre:" />
+                  <Label text="Poblacion:" />
+                  <Label text="Monedas:" />
+                  <Label text="Capital:" />
+                  <Label text="Idiomas:" />
+               </children>
+            </VBox>
+            <VBox prefHeight="141.0" prefWidth="341.0" spacing="15.0">
+               <children>
+                  <TextField fx:id="txtNombre" editable="false" prefHeight="24.0" prefWidth="411.0" />
+                  <TextField fx:id="txtPoblacion" editable="false" />
+                  <TextField fx:id="txtMonedas" editable="false" />
+                  <TextField fx:id="txtCapital" editable="false" />
+                  <TextField fx:id="txtIdiomas" editable="false" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <Button fx:id="btnAnterior" layoutX="552.0" layoutY="565.0" mnemonicParsing="false" onAction="#onAnteriorButtonClick" text="Anterior" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="97.0" />
+      <Button fx:id="btnSiguiente" layoutX="629.0" layoutY="565.0" mnemonicParsing="false" onAction="#onSiguienteButtonClick" text="Siguiente" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="15.0" />
+      <Label fx:id="lblNoEncontrado" layoutX="201.0" layoutY="59.0" text="No se ha encontrado en la API" textFill="RED" visible="false" />
+      <TableView fx:id="resultsTbl" layoutX="32.0" layoutY="300.0" prefHeight="192.0" prefWidth="392.0" />
+   </children>
+</AnchorPane>
