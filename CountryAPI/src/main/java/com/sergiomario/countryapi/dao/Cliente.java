@@ -2,6 +2,9 @@ package com.sergiomario.countryapi.dao;
 
 import java.io.IOException;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
 
 public class Cliente {
@@ -51,15 +54,48 @@ public class Cliente {
     public String enviarCredenciales(String user, String passwd) {
 
         String macAddress = getLocalMACAddress();
+        String token = null;
 
         if(macAddress != null ) {
 
             String rawData = "USER?:" + user + "||PASSWORD?:" + passwd + "||MAC?:" + macAddress;
-            System.out.println(rawData);
+            String hashedData = hashCredenciales(rawData);
+
+            enviar( "CRED-" + hashCredenciales(rawData));
 
         }
 
-        return  "";
+        return token;
+    }
+
+    public String hashCredenciales(String rawData ) {
+
+        String out = null;
+
+        try {
+
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            String salt = "renaido";
+
+            md.update(salt.getBytes());
+            byte[] hashBytes = md.digest(rawData.getBytes(StandardCharsets.UTF_8));
+
+            StringBuilder sb = new StringBuilder();
+
+            for(int i=0; i< hashBytes.length ;i++){
+
+                sb.append(Integer.toString((hashBytes[i] & 0xff) + 0x100, 16).substring(1));
+
+            }
+
+            out = sb.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+
+
+        }
+
+        return out;
     }
 
     private String getLocalMACAddress() {
