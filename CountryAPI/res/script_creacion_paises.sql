@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS PAISES(
                                      ID_PAIS INT UNSIGNED AUTO_INCREMENT NOT NULL,
                                      NOMBRE VARCHAR(80) NOT NULL,
                                      NUM_HABITANTES INT UNSIGNED NOT NULL,
-                                     CAPITAL VARCHAR(80) NOT NULL,
+                                     CAPITAL VARCHAR(80) NULL,
 
                                      PRIMARY KEY (ID_PAIS),
                                      UNIQUE INDEX AK_NOMBRE(NOMBRE)
