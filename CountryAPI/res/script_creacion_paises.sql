@@ -4,38 +4,70 @@ USE BBDD_PAISES;
 
 CREATE TABLE MONEDAS(
 
-    ID_MONEDA INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    NOMBRE TEXT NOT NULL,
+     ID_MONEDA INT UNSIGNED AUTO_INCREMENT NOT NULL,
+                        NOMBRE VARCHAR(20) NOT NULL,
 
-    PRIMARY KEY (ID_MONEDA)
-
-) ENGINE MYISAM;
-
-CREATE TABLE IF NOT EXISTS MONEDAS_PAISES(
-
-     ID_MONEDA INT UNSIGNED NOT NULL,
-     ID_PAIS INT UNSIGNED NOT NULL,
-
-     FOREIGN KEY FK_MONEDA(ID_MONEDA) REFERENCES MONEDAS(ID_MONEDA)
-         ON DELETE RESTRICT
-         ON UPDATE CASCADE,
-
-     FOREIGN KEY FK_PAIS(ID_PAIS) REFERENCES PAISES(ID_PAIS)
-         ON DELETE CASCADE
-         ON UPDATE CASCADE,
-
-     PRIMARY KEY (ID_PAIS, ID_MONEDA)
+                        PRIMARY KEY (ID_MONEDA)
 
 ) ENGINE INNODB;
 
+
 CREATE TABLE IF NOT EXISTS PAISES(
 
-     ID_PAIS INT UNSIGNED AUTO_INCREMENT NOT NULL,
-     NOMBRE TEXT NOT NULL,
-     NUM_HABITANTES INT UNSIGNED NOT NULL,
-     CAPITAL TEXT NOT NULL,
+                                     ID_PAIS INT UNSIGNED AUTO_INCREMENT NOT NULL,
+                                     NOMBRE VARCHAR(40) NOT NULL,
+                                     NUM_HABITANTES INT UNSIGNED NOT NULL,
+                                     CAPITAL VARCHAR(40) NOT NULL,
 
-     PRIMARY KEY (ID_PAIS),
-     UNIQUE INDEX AK_NOMBRE(NOMBRE)
+                                     PRIMARY KEY (ID_PAIS),
+                                     UNIQUE INDEX AK_NOMBRE(NOMBRE)
 
-)ENGINE MYISAM;
+)ENGINE INNODB;
+
+
+CREATE TABLE IF NOT EXISTS MONEDAS_PAISES(
+
+                                             MONEDA INT UNSIGNED NOT NULL,
+                                             PAIS INT UNSIGNED NOT NULL,
+
+                                             FOREIGN KEY FK_MONEDA(MONEDA) REFERENCES MONEDAS(ID_MONEDA)
+                                                 ON DELETE RESTRICT
+                                                 ON UPDATE CASCADE,
+
+                                             FOREIGN KEY FK_PAIS(PAIS) REFERENCES PAISES(ID_PAIS)
+                                                 ON DELETE CASCADE
+                                                 ON UPDATE CASCADE,
+
+                                             PRIMARY KEY (PAIS, MONEDA)
+
+) ENGINE INNODB;
+
+
+CREATE TABLE IF NOT EXISTS IDIOMAS(
+
+    ID_IDIOMA INT UNSIGNED NOT NULL,
+    NOMBRE VARCHAR(20) NOT NULL,
+
+    PRIMARY KEY (ID_IDIOMA),
+    UNIQUE INDEX AK_NOMBRE(NOMBRE)
+
+) ENGINE INNODB;
+
+
+CREATE TABLE IF NOT EXISTS IDIOMAS_PAISES (
+
+    IDIOMA INT UNSIGNED NOT NULL,
+    PAIS INT UNSIGNED NOT NULL,
+
+    FOREIGN KEY FK_IDIOMA(IDIOMA) REFERENCES IDIOMAS(ID_IDIOMA)
+                                          ON DELETE RESTRICT
+                                          ON UPDATE CASCADE,
+
+    FOREIGN KEY FK_PAIS_IDIOMA(PAIS) REFERENCES PAISES(ID_PAIS)
+                                          ON DELETE RESTRICT
+                                          ON UPDATE CASCADE,
+
+    PRIMARY KEY (IDIOMA, PAIS)
+
+
+) ENGINE INNODB;
