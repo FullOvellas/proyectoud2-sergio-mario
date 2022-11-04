@@ -9,7 +9,7 @@ import java.net.SocketException;
 public class Server {
 
     private static final int SERVER_PORT = 8090;
-    private static InetAddress addressr;
+    private static InetAddress address;
     private static DatagramSocket socket;
     private static DatagramPacket paquete;
     private static byte[] buffer;
@@ -44,8 +44,13 @@ public class Server {
             try {
 
                 socket.receive(paquete);
-                System.out.println("Recibido " + new String(paquete.getData(), paquete.getOffset(), paquete.getLength(), "UTF-8"));
+                String data = new String(paquete.getData(), paquete.getOffset(), paquete.getLength(), "UTF-8");
 
+                if(data.startsWith("CRED-") ) {
+
+                    loginUser(data);
+
+                }
 
             } catch (IOException ex ) {
 
@@ -57,5 +62,17 @@ public class Server {
 
     }
 
+    private static String loginUser(String rawCredentials) {
 
+        String unHashedStr = unHashCredentials(rawCredentials);
+
+
+
+    }
+
+    private static String unHashCredentials(String hashedData) {
+
+        
+
+    }
 }
