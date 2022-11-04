@@ -1,10 +1,10 @@
 package com.sergiomario.countryapi;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class Server {
 
@@ -48,7 +48,8 @@ public class Server {
 
                 if(data.startsWith("CRED-") ) {
 
-                    loginUser(data);
+                    System.out.println(data);
+                    loginUser(data, paquete.getAddress());
 
                 }
 
@@ -62,17 +63,85 @@ public class Server {
 
     }
 
-    private static String loginUser(String rawCredentials) {
+    private static String loginUser(String rawCredentials, InetAddress address) {
 
-        String unHashedStr = unHashCredentials(rawCredentials);
+        String login;
+        String packetIp = address.getHostAddress();
+        String hashedIP, hashedCredentials;
+        int loginLength;
+        boolean correcto = false;
 
+        rawCredentials = rawCredentials.substring(5);
+        loginLength = Integer.parseInt(rawCredentials.substring(0, rawCredentials.indexOf("-")));
 
+        rawCredentials = rawCredentials.substring(2);
+        login = rawCredentials.substring(0, loginLength);
 
+        rawCredentials = rawCredentials.substring(loginLength);
+        hashedCredentials = rawCredentials.substring(0, 128);
+        hashedIP = rawCredentials.substring(128);
+
+        if(address.getHostAddress().equals("127.0.0.1") ) {
+
+            // Debido a que 127.0.1.1 es loopback de 127.0.0.1
+
+            // TODO: es un parche para funcionar en localhost
+            packetIp = "127.0.1.1";
+
+        }
+
+        if(hashString(packetIp).equals(hashedIP)) {
+
+            String tempUser = "user";
+            String tempPassword = "1234";
+
+            if(tempUser.equals(login) ) {
+
+                if(hashString(tempPassword).equals(hashedCredentials) ) {
+
+                    correcto = true;
+
+                }
+
+            }
+
+        }
+
+        return (correcto)? generarToken(login) : null;
     }
 
-    private static String unHashCredentials(String hashedData) {
-
-        
-
+    private static String generarToken(String userLogin) {
+        return "tokentemp";
     }
+
+    private static String hashString(String rawData ) {
+
+        String out = null;
+
+        try {
+
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            String salt = "renaido";
+
+            md.update(salt.getBytes());
+            byte[] hashBytes = md.digest(rawData.getBytes(StandardCharsets.UTF_8));
+
+            StringBuilder sb = new StringBuilder();
+
+            for (byte hashByte : hashBytes) {
+
+                sb.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
+
+            }
+
+            out = sb.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+
+
+        }
+
+        return out;
+    }
+
 }

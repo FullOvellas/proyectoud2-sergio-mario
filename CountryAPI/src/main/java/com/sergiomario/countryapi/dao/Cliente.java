@@ -5,7 +5,6 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Enumeration;
 
 public class Cliente {
 
@@ -23,9 +22,7 @@ public class Cliente {
 
     }
 
-    private Cliente() {
-
-    }
+    private Cliente() {}
 
     public boolean configurarConexion(String ip) {
 
@@ -36,12 +33,6 @@ public class Cliente {
             socket = new DatagramSocket();
             adr = InetAddress.getByName(ip);
 
-
-
-
-
-
-
         } catch (UnknownHostException | SocketException e) {
 
             out = false;
@@ -51,24 +42,37 @@ public class Cliente {
         return out;
     }
 
+    /**
+     * Método para iniciar sesión contra el servidor
+     * @param user el login de usuario
+     * @param passwd la contraseña del usuario
+     * @return un token de acceso o null si no se pudo hacer login
+     */
     public String enviarCredenciales(String user, String passwd) {
 
-        String macAddress = getLocalMACAddress();
+        String ipAddress = getLocalIpAddress();
         String token = null;
 
-        if(macAddress != null ) {
+        if(ipAddress != null ) {
 
-            String rawData = "USER?:" + user + "||PASSWORD?:" + passwd + "||MAC?:" + macAddress;
-            String hashedData = hashCredenciales(rawData);
+            System.out.println(ipAddress);
 
-            enviar( "CRED-" + hashCredenciales(rawData));
+            String hashedCredentialData = hashString(passwd);
+            String hashedIPData = hashString(ipAddress);
+
+            // Para separar los hashes se tiene en cuenta que
+            // independientemente de la entrada, la longitud del
+            // string del hash es 128 caracteres
+
+                // "tipo mensaje" - longitud del login - login    -     hash contraseña    - hash IP
+            enviar( "CRED-" + user.length() + "-" + user + "" + hashedCredentialData + hashedIPData);
 
         }
 
         return token;
     }
 
-    public String hashCredenciales(String rawData ) {
+    public String hashString(String rawData ) {
 
         String out = null;
 
@@ -82,9 +86,9 @@ public class Cliente {
 
             StringBuilder sb = new StringBuilder();
 
-            for(int i=0; i< hashBytes.length ;i++){
+            for (byte hashByte : hashBytes) {
 
-                sb.append(Integer.toString((hashBytes[i] & 0xff) + 0x100, 16).substring(1));
+                sb.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
 
             }
 
@@ -98,32 +102,21 @@ public class Cliente {
         return out;
     }
 
-    private String getLocalMACAddress() {
+    private String getLocalIpAddress() {
 
-        String macAddress = null;
+        String ipAddress = null;
 
-        try(final DatagramSocket socketTemp = new DatagramSocket()){
+        try {
 
-            socketTemp.connect(InetAddress.getByName("8.8.8.8"), 10002);
+            InetAddress address = InetAddress.getLocalHost();
 
-            NetworkInterface ni = NetworkInterface.getByInetAddress(socketTemp.getLocalAddress());
-            byte[] hardwareAddress = ni.getHardwareAddress();
-            String[] hexadecimalFormat = new String[hardwareAddress.length];
+            ipAddress = address.getHostAddress();
 
-            for (int i = 0; i < hardwareAddress.length; i++) {
-
-                hexadecimalFormat[i] = String.format("%02X", hardwareAddress[i]);
-
-            }
-
-            macAddress = String.join("-", hexadecimalFormat);
-
-        } catch (SocketException | UnknownHostException ex) {
-
+        } catch (UnknownHostException ex) {
 
         }
 
-        return macAddress;
+        return ipAddress;
     }
 
     private boolean enviar(String datos ) {
@@ -145,7 +138,5 @@ public class Cliente {
 
         return out;
     }
-
-
 
 }

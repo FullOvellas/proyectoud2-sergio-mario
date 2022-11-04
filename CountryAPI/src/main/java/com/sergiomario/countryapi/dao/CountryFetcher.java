@@ -50,7 +50,7 @@ public class CountryFetcher {
         }
 
         client.configurarConexion("127.0.0.1"); // TODO: TEMP
-        client.enviarCredenciales("mario", "1234");
+        client.enviarCredenciales("user", "1234");
 
     }
 
