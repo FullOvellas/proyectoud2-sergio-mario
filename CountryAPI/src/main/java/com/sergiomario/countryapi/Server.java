@@ -1,5 +1,6 @@
 package com.sergiomario.countryapi;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -11,7 +12,7 @@ public class Server {
     private static InetAddress addressr;
     private static DatagramSocket socket;
     private static DatagramPacket paquete;
-    private byte[] buffer;
+    private static byte[] buffer;
 
 
     public static void main(String[] args) {
@@ -19,6 +20,8 @@ public class Server {
         try {
 
             socket = new DatagramSocket(SERVER_PORT);
+
+            System.out.println(" ### Server escuchando en puerto " + SERVER_PORT + " ### ");
 
         } catch (SocketException e) {
 
@@ -28,5 +31,29 @@ public class Server {
         }
 
     }
+
+    private static void escuchar() {
+
+        while(true) {
+
+            buffer = new byte[1024];
+            paquete = new DatagramPacket(buffer, buffer.length);
+
+            try {
+
+                socket.receive(paquete);
+                System.out.println("Recibido " + new String(paquete.getData()));
+
+
+            } catch (IOException ex ) {
+
+                System.out.println("Error al enviar");
+
+            }
+
+        }
+
+    }
+
 
 }
