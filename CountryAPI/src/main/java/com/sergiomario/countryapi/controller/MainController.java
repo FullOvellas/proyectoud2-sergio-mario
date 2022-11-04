@@ -1,7 +1,7 @@
 package com.sergiomario.countryapi.controller;
 
 import com.sergiomario.countryapi.Main;
-import com.sergiomario.countryapi.dao.Data;
+import com.sergiomario.countryapi.dao.Cliente;
 import com.sergiomario.countryapi.dao.CountryFetcher;
 
 import javafx.fxml.FXML;
@@ -33,9 +33,10 @@ public class MainController {
     @FXML
     protected void onLoginClick() {
 
-        Data appData = Data.instance;
+        String token = Cliente.instance.enviarCredenciales(txtUsuario.getText(), txtPassword.getText());
 
-        if(txtUsuario.getText().equals(appData.getUser()) && txtPassword.getText().equals(appData.getPassword())) {
+        // TODO: token es siempre null
+        if(token != null) {
 
             // Volver a hacer invisible por si se vuelve a la pantalla de login
             lblWrongPassword.setVisible(false);
