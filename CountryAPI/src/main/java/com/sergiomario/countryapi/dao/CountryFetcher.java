@@ -36,6 +36,8 @@ public class CountryFetcher {
 
     public static void init() {
 
+        Cliente client = Cliente.instance;
+
         cachedCountries = new ArrayList<>();
         hasConnection = checkConnection();
 
@@ -46,6 +48,8 @@ public class CountryFetcher {
             loadFromCache();
 
         }
+
+        client.configurarConexion("127.0.0.1"); // TODO: TEMP
 
     }
 

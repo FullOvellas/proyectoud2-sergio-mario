@@ -23,6 +23,8 @@ public class Server {
 
             System.out.println(" ### Server escuchando en puerto " + SERVER_PORT + " ### ");
 
+            escuchar();
+
         } catch (SocketException e) {
 
             System.out.println("**Error al crear el servidor");
@@ -42,7 +44,7 @@ public class Server {
             try {
 
                 socket.receive(paquete);
-                System.out.println("Recibido " + new String(paquete.getData()));
+                System.out.println("Recibido " + new String(paquete.getData(), paquete.getOffset(), paquete.getLength(), "UTF-8"));
 
 
             } catch (IOException ex ) {
