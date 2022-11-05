@@ -50,14 +50,11 @@ public class Server {
 
                 if(data.startsWith("CRED-") ) {
 
-                    System.out.println(data);
                     loginUser(data, paquete.getAddress(), paquete.getPort());
 
-                } else if(data.startsWith("SEARCH-NAME-") ) {
+                } else if(data.startsWith("SEARCH-") ) {
 
-                    String countryName = data.substring(data.indexOf("-") + 1);
-
-
+                    search(data);
 
                 }
 
@@ -71,6 +68,22 @@ public class Server {
 
     }
 
+    private static void search(String data ) {
+
+        String countryName = data.substring(data.indexOf("-") + 1);
+
+        // Quitar "prefijo" search
+
+        data = data.substring(8);
+        System.out.println(data);
+
+        if(data.startsWith("NAME") ) {
+
+            // Buscar por nombre
+
+        }
+
+    }
     private static void enviar(String data, InetAddress address, int userPort ) {
 
         try {
