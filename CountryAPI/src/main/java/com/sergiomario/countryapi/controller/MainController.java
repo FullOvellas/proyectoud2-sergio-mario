@@ -35,8 +35,7 @@ public class MainController {
 
         String token = Cliente.instance.enviarCredenciales(txtUsuario.getText(), txtPassword.getText());
 
-        // TODO: token es siempre null
-        if(token != null) {
+        if(!token.equals("ERROR")) {
 
             // Volver a hacer invisible por si se vuelve a la pantalla de login
             lblWrongPassword.setVisible(false);

@@ -5,6 +5,8 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 public class Server {
 
@@ -49,13 +51,13 @@ public class Server {
                 if(data.startsWith("CRED-") ) {
 
                     System.out.println(data);
-                    loginUser(data, paquete.getAddress());
+                    loginUser(data, paquete.getAddress(), paquete.getPort());
 
                 }
 
             } catch (IOException ex ) {
 
-                System.out.println("Error al enviar");
+                System.out.println("Error al escuchar a " + address.getHostAddress());
 
             }
 
@@ -63,9 +65,26 @@ public class Server {
 
     }
 
-    private static String loginUser(String rawCredentials, InetAddress address) {
+    private static void enviar(String data, InetAddress address, int userPort ) {
 
-        String login;
+        try {
+
+            buffer = data.getBytes();
+            paquete = new DatagramPacket(buffer, buffer.length, address, userPort);
+
+            socket.send(paquete);
+
+        } catch (IOException ex ) {
+
+            System.out.println("Error al enviar a " + address.getHostAddress());
+
+        }
+
+    }
+
+    private static void loginUser(String rawCredentials, InetAddress address, int userPort) {
+
+        String login, userToken = "ERROR";
         String packetIp = address.getHostAddress();
         String hashedIP, hashedCredentials;
         int loginLength;
@@ -95,23 +114,27 @@ public class Server {
             String tempUser = "user";
             String tempPassword = "1234";
 
-            if(tempUser.equals(login) ) {
+            if(tempUser.equals(login) && hashString(tempPassword).equals(hashedCredentials)) {
 
-                if(hashString(tempPassword).equals(hashedCredentials) ) {
-
-                    correcto = true;
-
-                }
+                userToken = generarToken(login);
 
             }
 
         }
 
-        return (correcto)? generarToken(login) : null;
+        enviar(userToken, address, userPort);
+
     }
 
     private static String generarToken(String userLogin) {
-        return "tokentemp";
+
+        SecureRandom secureRandom = new SecureRandom();
+        Base64.Encoder base64Encoder = Base64.getUrlEncoder();
+        byte[] randomBytes = new byte[24];
+
+        secureRandom.nextBytes(randomBytes);
+
+        return base64Encoder.encodeToString(randomBytes);
     }
 
     private static String hashString(String rawData ) {

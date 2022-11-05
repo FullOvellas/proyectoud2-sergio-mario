@@ -13,8 +13,6 @@ public class Cliente {
 
     private InetAddress adr; // server
     private DatagramSocket socket;
-    private DatagramPacket paquete;
-    private byte[] buffer;
 
     static {
 
@@ -31,6 +29,7 @@ public class Cliente {
         try {
 
             socket = new DatagramSocket();
+            socket.setSoTimeout(3000);
             adr = InetAddress.getByName(ip);
 
         } catch (UnknownHostException | SocketException e) {
@@ -51,7 +50,7 @@ public class Cliente {
     public String enviarCredenciales(String user, String passwd) {
 
         String ipAddress = getLocalIpAddress();
-        String token = null;
+        String token = "ERROR";
 
         if(ipAddress != null ) {
 
@@ -66,6 +65,7 @@ public class Cliente {
 
                 // "tipo mensaje" - longitud del login - login    -     hash contraseña    - hash IP
             enviar( "CRED-" + user.length() + "-" + user + "" + hashedCredentialData + hashedIPData);
+            token = recibir();
 
         }
 
@@ -123,8 +123,8 @@ public class Cliente {
 
         boolean out = true;
 
-        buffer = datos.getBytes();
-        paquete = new DatagramPacket(buffer, buffer.length, adr, SERVER_PORT);
+        byte[] buffer = datos.getBytes();
+        DatagramPacket paquete = new DatagramPacket(buffer, buffer.length, adr, SERVER_PORT);
 
         try {
 
@@ -137,6 +137,29 @@ public class Cliente {
         }
 
         return out;
+    }
+
+    private String recibir() {
+
+        String data = null;
+
+        try {
+
+            byte[] buffer = new byte[1024];
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+
+            socket.receive(packet);
+            data = new String(packet.getData(), packet.getOffset(), packet.getLength(), "UTF-8");
+
+            System.out.println("Recibido   " + data);
+
+        } catch (IOException ex ) {
+
+
+
+        }
+
+        return data;
     }
 
 }
