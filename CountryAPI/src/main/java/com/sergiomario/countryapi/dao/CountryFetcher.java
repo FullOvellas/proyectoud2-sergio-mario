@@ -1,29 +1,27 @@
 package com.sergiomario.countryapi.dao;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Comparator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.sergiomario.countryapi.model.country.Country;
 import com.sergiomario.countryapi.model.country.CurrenciesItem;
 import com.sergiomario.countryapi.model.country.LanguagesItem;
 
+import com.sergiomario.countryapi.model.country.Pais;
 import javafx.scene.image.Image;
 
 
@@ -39,41 +37,9 @@ public class CountryFetcher {
         Cliente client = Cliente.instance;
 
         cachedCountries = new ArrayList<>();
-        hasConnection = checkConnection();
-
-        System.out.println("Conexión: " + hasConnection);
-
-        if(!hasConnection ) {
-
-            loadFromCache();
-
-        }
 
         client.configurarConexion("127.0.0.1"); // TODO: TEMP
 
-    }
-
-    public static boolean isConnected() {
-        return hasConnection;
-    }
-    private static boolean checkConnection() {
-
-        boolean out = true;
-
-        try {
-
-            URL url = new URL("https://www.google.com");
-            URLConnection connection = url.openConnection();
-            connection.setConnectTimeout(2000);
-            connection.connect();
-
-        } catch (IOException e) {
-
-            out = false;
-
-        }
-
-        return out;
     }
 
     public static ArrayList<Country> searchCountriesByCapital(String searchStr ) {
@@ -108,30 +74,31 @@ public class CountryFetcher {
         return out;
     }
 
-    public static ArrayList<Country> searchCountriesByName(String searchStr ) {
-        ArrayList<Country> out;
+    public static ArrayList<Pais> searchCountriesByName(String searchStr ) {
+        ArrayList<Pais> out = new ArrayList<>();
 
-        if(hasConnection ) {
+        Cliente.instance.enviar("SEARCH-NAME- " + searchStr.length() + "-" +  searchStr + "-" + Cliente.instance.getToken());
 
-            out = genericSearch("name", searchStr);
+        String data = Cliente.instance.recibir();
 
-        } else {
+        if(!data.equals("ERROR") ) {
 
-            out = new ArrayList<>();
+            try {
 
-            cachedCountries.forEach(country -> {
+                byte[] b = Base64.getDecoder().decode(data.getBytes());
 
-                if(country.getName().toLowerCase().matches(searchStr.toLowerCase()) || country.getName().toLowerCase().contains(searchStr.toLowerCase() ) ) {
+                ByteArrayInputStream byteStream = new ByteArrayInputStream(b);
+                ObjectInputStream objStream = new ObjectInputStream(byteStream);
 
-                    out.add(country);
+                out = (ArrayList<Pais>) objStream.readObject();
 
-                }
+                out.sort(Comparator.comparingInt(country -> -country.getNumHabitantes()));
 
-            });
+            } catch (IOException | ClassNotFoundException ex ) {
+
+            }
 
         }
-
-        out.sort(Comparator.comparingInt(country -> -country.getPopulation()));
 
         return out;
     }

@@ -13,6 +13,7 @@ public class Cliente {
 
     private InetAddress adr; // server
     private DatagramSocket socket;
+    private String token;
 
     static {
 
@@ -20,7 +21,15 @@ public class Cliente {
 
     }
 
-    private Cliente() {}
+    private Cliente() {
+
+        token = "";
+
+    }
+
+    public String getToken() {
+        return token;
+    }
 
     public boolean configurarConexion(String ip) {
 
@@ -50,7 +59,7 @@ public class Cliente {
     public String enviarCredenciales(String user, String passwd) {
 
         String ipAddress = getLocalIpAddress();
-        String token = "ERROR";
+        String newToken = "ERROR";
 
         if(ipAddress != null ) {
 
@@ -65,11 +74,17 @@ public class Cliente {
 
                 // "tipo mensaje" - longitud del login - login    -     hash contraseña    - hash IP
             enviar( "CRED-" + user.length() + "-" + user + "" + hashedCredentialData + hashedIPData);
-            token = recibir();
+            newToken = recibir();
+
+            if(!newToken.equals("ERROR") ) {
+
+                this.token = newToken;
+
+            }
 
         }
 
-        return token;
+        return newToken;
     }
 
     public String hashString(String rawData ) {
@@ -119,7 +134,7 @@ public class Cliente {
         return ipAddress;
     }
 
-    private boolean enviar(String datos ) {
+    public boolean enviar(String datos ) {
 
         boolean out = true;
 
@@ -139,7 +154,7 @@ public class Cliente {
         return out;
     }
 
-    private String recibir() {
+    public String recibir() {
 
         String data = null;
 
