@@ -136,9 +136,7 @@ public class Cliente {
         return ipAddress;
     }
 
-    public boolean enviar(String datos ) throws SocketException {
-
-        boolean out = true;
+    public void enviar(String datos ) throws SocketException {
 
         byte[] buffer = datos.getBytes();
         DatagramPacket paquete = new DatagramPacket(buffer, buffer.length, adr, SERVER_PORT);
@@ -155,11 +153,10 @@ public class Cliente {
 
         } catch (IOException e) {
 
-            out = false;
+            throw new SocketException();
 
         }
 
-        return out;
     }
 
     /**
@@ -169,7 +166,7 @@ public class Cliente {
      */
     public String recibir() throws SocketException{
 
-        String data = null;
+        String data;
 
         try {
 
@@ -178,8 +175,6 @@ public class Cliente {
 
             socket.receive(packet);
             data = new String(packet.getData(), packet.getOffset(), packet.getLength(), "UTF-8");
-
-            System.out.println("Recibido   " + data);
 
         } catch (IOException ex ) {
 

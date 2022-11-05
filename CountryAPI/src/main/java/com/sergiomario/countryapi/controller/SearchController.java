@@ -221,6 +221,8 @@ public class SearchController implements Initializable {
 
         txtMonedas.setText(strMonedas.toString());
 
+        imgBandera.setImage(CountryFetcher.getFlag(c.getNombre()));
+
         StringBuilder strIdiomas = new StringBuilder("");
 
         for(int i = 0; i < c.getIdiomas().size(); i++ ) {

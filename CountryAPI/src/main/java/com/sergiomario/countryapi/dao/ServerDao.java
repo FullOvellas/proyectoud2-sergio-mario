@@ -27,8 +27,6 @@ public class ServerDao {
 
         } catch (SQLException e) {
 
-            e.printStackTrace();
-
         }
 
     }
@@ -74,10 +72,10 @@ public class ServerDao {
 
         try {
                                                                                         // TODO: es PAIS o ID_PAIS ??
-            PreparedStatement ps = db.prepareStatement("SELECT NOMBRE FROM MONEDAS INNER JOIN MONEDAS_PAISES WHERE PAIS = ?");
+            PreparedStatement ps = db.prepareStatement("SELECT NOMBRE FROM IDIOMAS AS I INNER JOIN IDIOMAS_PAISES AS IP ON I.ID_IDIOMA = IP.IDIOMA AND IP.PAIS = ?");
             ResultSet rs;
 
-            ps.setInt(idPais, 1);
+            ps.setInt( 1, idPais);
             rs = ps.executeQuery();
 
             while (rs.next() ) {
@@ -87,8 +85,6 @@ public class ServerDao {
             }
 
         } catch (SQLException ex ) {
-
-
 
         }
 
@@ -101,10 +97,10 @@ public class ServerDao {
 
         try {
                                                                                                 // TODO: es PAIS o ID_PAIS ??
-            PreparedStatement ps = db.prepareStatement("SELECT NOMBRE FROM IDIOMAS INNER JOIN IDIOMAS_PAISES WHERE PAIS = ?");
+            PreparedStatement ps = db.prepareStatement("SELECT NOMBRE FROM MONEDAS AS M INNER JOIN MONEDAS_PAISES AS MP ON M.ID_MONEDA = MP.MONEDA AND MP.PAIS = ?");
             ResultSet rs;
 
-            ps.setInt(idPais, 1);
+            ps.setInt( 1, idPais);
             rs = ps.executeQuery();
 
             while (rs.next() ) {
@@ -114,7 +110,6 @@ public class ServerDao {
             }
 
         } catch (SQLException ex ) {
-
 
 
         }

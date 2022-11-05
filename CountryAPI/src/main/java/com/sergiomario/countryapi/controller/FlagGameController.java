@@ -114,15 +114,15 @@ public class FlagGameController {
 
             case 0 -> {
                 correctButton = optBtn1;
-                flag.setImage(CountryFetcher.getFlag(countries[0]));
+                flag.setImage(CountryFetcher.getFlag(countries[0].getName()));
             }
             case 1 -> {
                 correctButton = optBtn2;
-                flag.setImage(CountryFetcher.getFlag(countries[1]));
+                flag.setImage(CountryFetcher.getFlag(countries[1].getName()));
             }
             case 2 -> {
                 correctButton = optBtn3;
-                flag.setImage(CountryFetcher.getFlag(countries[2]));
+                flag.setImage(CountryFetcher.getFlag(countries[2].getName()));
             }
         }
 

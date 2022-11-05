@@ -275,11 +275,11 @@ public class CountryFetcher {
 
     }
 
-    public static Image getFlag(Country c) {
+    public static Image getFlag(String name) {
 
         String path = "file:res/img/%s.png";
 
-        return new Image(String.format(path, c.getName()));
+        return new Image(String.format(path, name));
 
     }
 
