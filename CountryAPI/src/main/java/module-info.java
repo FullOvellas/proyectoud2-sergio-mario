@@ -3,6 +3,7 @@ module com.sergiomario.countryapi {
     requires javafx.fxml;
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
+    requires java.sql;
 
     opens com.sergiomario.countryapi.controller to javafx.fxml;
     opens com.sergiomario.countryapi.model.country to com.fasterxml.jackson.databind;
