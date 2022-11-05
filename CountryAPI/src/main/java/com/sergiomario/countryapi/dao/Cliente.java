@@ -136,12 +136,18 @@ public class Cliente {
         return ipAddress;
     }
 
-    public boolean enviar(String datos ) {
+    public boolean enviar(String datos ) throws SocketException {
 
         boolean out = true;
 
         byte[] buffer = datos.getBytes();
         DatagramPacket paquete = new DatagramPacket(buffer, buffer.length, adr, SERVER_PORT);
+
+        if(socket == null ) {
+
+            throw new SocketException();
+
+        }
 
         try {
 

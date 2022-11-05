@@ -9,6 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 
 import java.net.SocketException;
 
@@ -18,6 +20,9 @@ import java.net.SocketException;
 public class MainController {
 
     @FXML
+    TextField txtDireccion;
+
+    @FXML
     TextField txtUsuario;
 
     @FXML
@@ -25,6 +30,25 @@ public class MainController {
 
     @FXML
     PasswordField txtPassword;
+
+    @FXML
+    private void onCkeckAddressClick() {
+
+        String ip = txtDireccion.getText();
+        boolean encontrada = Cliente.instance.configurarConexion(ip);
+
+        if(encontrada ) {
+
+            txtDireccion.setStyle("-fx-control-inner-background: #416d31");
+
+        } else {
+
+            txtDireccion.setText("");
+            txtDireccion.setStyle("-fx-control-inner-background: #FF0000");
+
+        }
+
+    }
 
     /**
      * Método para cuando se da click al botón de iniciar sesión. Comprueba las credenciales y pasa a mostrar

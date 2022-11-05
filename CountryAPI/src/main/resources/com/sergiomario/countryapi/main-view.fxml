@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane centerShape="false" prefHeight="500.0" prefWidth="709.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sergiomario.countryapi.controller.MainController">
+<AnchorPane centerShape="false" prefHeight="500.0" prefWidth="709.0" xmlns="http://javafx.com/javafx/17.0.1-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sergiomario.countryapi.controller.MainController">
     <children>
-        <Label fx:id="lblAppTitle" contentDisplay="CENTER" layoutX="310.0" layoutY="53.0" minHeight="-Infinity" minWidth="149.0" prefHeight="33.0" prefWidth="149.0" text="CountryBBDD" textAlignment="CENTER">
+        <Label fx:id="lblAppTitle" contentDisplay="CENTER" layoutX="297.0" layoutY="51.0" minHeight="-Infinity" minWidth="149.0" prefHeight="34.0" prefWidth="175.0" text="CountryBBDD" textAlignment="CENTER">
             <font>
                 <Font name="Cantarell Regular" size="26.0" />
             </font>
@@ -19,5 +23,8 @@
       <Separator layoutX="160.0" layoutY="95.0" prefHeight="5.0" prefWidth="391.0" AnchorPane.leftAnchor="160.0" AnchorPane.rightAnchor="158.0" />
       <Separator layoutX="160.0" layoutY="259.0" prefHeight="5.0" prefWidth="391.0" AnchorPane.leftAnchor="160.0" AnchorPane.rightAnchor="158.0" />
       <Label fx:id="lblWrongPassword" layoutX="260.0" layoutY="230.0" text="El usuario o contraseña no son correctos" textFill="#ef1919" visible="false" />
+      <TextField fx:id="txtDireccion" layoutX="497.0" layoutY="460.0" />
+      <Label layoutX="427.0" layoutY="464.0" text="IP server:" />
+      <Button layoutX="659.0" layoutY="460.0" mnemonicParsing="false" text="Ok" onAction="#onCkeckAddressClick"/>
     </children>
 </AnchorPane>

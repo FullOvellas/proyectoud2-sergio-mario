@@ -31,11 +31,7 @@ public class CountryFetcher {
 
     public static void init() {
 
-        Cliente client = Cliente.instance;
-
         cachedCountries = new ArrayList<>();
-
-        client.configurarConexion("127.0.0.1"); // TODO: TEMP
 
     }
 
@@ -74,9 +70,9 @@ public class CountryFetcher {
     public static ArrayList<Pais> searchCountriesByName(String searchStr ) {
         ArrayList<Pais> out = new ArrayList<>();
 
-        Cliente.instance.enviar("SEARCH-NAME-" + searchStr.length() + "-" +  searchStr + "-" + Cliente.instance.getToken());
-
         try {
+
+            Cliente.instance.enviar("SEARCH-NAME-" + searchStr.length() + "-" +  searchStr + "-" + Cliente.instance.getToken());
 
             String data = Cliente.instance.recibir();
 
