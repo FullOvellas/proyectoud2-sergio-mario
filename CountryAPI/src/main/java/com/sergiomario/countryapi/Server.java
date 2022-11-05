@@ -176,6 +176,8 @@ public class Server {
 
                 userToken = generarToken(login);
 
+                System.out.println("Login: " + tempUser + " -- Token: " + userToken);
+
             }
 
         }
