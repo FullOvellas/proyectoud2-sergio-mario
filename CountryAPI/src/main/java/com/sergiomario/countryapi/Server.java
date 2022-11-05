@@ -53,6 +53,12 @@ public class Server {
                     System.out.println(data);
                     loginUser(data, paquete.getAddress(), paquete.getPort());
 
+                } else if(data.startsWith("SEARCH-NAME-") ) {
+
+                    String countryName = data.substring(data.indexOf("-") + 1);
+
+
+
                 }
 
             } catch (IOException ex ) {
