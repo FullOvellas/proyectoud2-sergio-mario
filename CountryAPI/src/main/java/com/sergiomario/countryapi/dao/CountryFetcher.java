@@ -1,10 +1,7 @@
 package com.sergiomario.countryapi.dao;
 
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.PreparedStatement;
@@ -79,24 +76,32 @@ public class CountryFetcher {
 
         Cliente.instance.enviar("SEARCH-NAME-" + searchStr.length() + "-" +  searchStr + "-" + Cliente.instance.getToken());
 
-        String data = Cliente.instance.recibir();
+        try {
 
-        if(data != null && !data.equals("ERROR") ) {
+            String data = Cliente.instance.recibir();
 
-            try {
+            if(data != null && !data.equals("ERROR") ) {
 
-                byte[] b = Base64.getDecoder().decode(data.getBytes());
+                try {
 
-                ByteArrayInputStream byteStream = new ByteArrayInputStream(b);
-                ObjectInputStream objStream = new ObjectInputStream(byteStream);
+                    byte[] b = Base64.getDecoder().decode(data.getBytes());
 
-                out = (ArrayList<Pais>) objStream.readObject();
+                    ByteArrayInputStream byteStream = new ByteArrayInputStream(b);
+                    ObjectInputStream objStream = new ObjectInputStream(byteStream);
 
-                out.sort(Comparator.comparingInt(country -> -country.getNumHabitantes()));
+                    out = (ArrayList<Pais>) objStream.readObject();
 
-            } catch (IOException | ClassNotFoundException ex ) {
+                    out.sort(Comparator.comparingInt(country -> -country.getNumHabitantes()));
+
+                } catch (IOException | ClassNotFoundException ex ) {
+
+                }
 
             }
+
+        } catch (SocketException ex ) {
+
+
 
         }
 
@@ -217,18 +222,6 @@ public class CountryFetcher {
 
     }
 
-    public static void loadFromCache() {
-
-        Path saveFile = Path.of("res", "CountryCache.json");
-
-        if(Files.exists(saveFile) ) {
-
-            cachedCountries = loadFromFile(saveFile);
-
-        }
-
-    }
-
     private static ArrayList<Country> loadFromFile(Path file) {
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -248,39 +241,6 @@ public class CountryFetcher {
 
         return out;
     }
-
-    public static boolean fetch() {
-
-        boolean out = false;
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        try {
-
-            BufferedReader br = new BufferedReader((new InputStreamReader(new URL("https://restcountries.com/v2/all").openStream())));
-
-            String json = br.readLine();
-
-            cachedCountries = objectMapper.readValue(json, new TypeReference<>() {});
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-        }
-
-        try (BufferedWriter bw = Files.newBufferedWriter(Path.of("res/CountryCache.json"))) {
-
-            objectMapper.writeValue(bw, cachedCountries);
-
-        } catch (IOException e) {
-
-            throw new RuntimeException(e);
-
-        }
-
-        return out;
-    }
-
 
     public static Country[] getRandomCountries(int countryNum) {
 
@@ -319,48 +279,9 @@ public class CountryFetcher {
 
     }
 
-    public static void updateImages() throws IOException {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        ArrayList<Country> consulta;
-
-        BufferedReader br = new BufferedReader((new InputStreamReader(new URL("https://restcountries.com/v2/all").openStream())));
-        String json = br.readLine();
-        consulta = objectMapper.readValue(json, new TypeReference<>() {});
-
-
-        for (Country c : consulta) {
-
-            Path out = Path.of("res/img/" + c.getName() + ".png");
-            byte[] bytes;
-
-            if (Files.exists(out)) {
-
-                Files.delete(out);
-
-            }
-
-            Files.createFile(out);
-
-            try (InputStream is = new URL(c.getFlags().getPng()).openStream()) {
-
-                bytes = is.readAllBytes();
-                Files.write(out, bytes);
-
-            } catch (FileNotFoundException e) {
-
-                System.out.println("File " + out + " not found.");
-
-            }
-
-        }
-
-    }
-
     public static Image getFlag(Country c) {
 
         String path = "file:res/img/%s.png";
-
 
         return new Image(String.format(path, c.getName()));
 

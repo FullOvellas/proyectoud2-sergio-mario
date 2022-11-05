@@ -54,9 +54,10 @@ public class Cliente {
      * Método para iniciar sesión contra el servidor
      * @param user el login de usuario
      * @param passwd la contraseña del usuario
-     * @return un token de acceso o null si no se pudo hacer login
+     * @return un token de acceso o null si no se pudo hacer login. Si las credenciales no son
+     * correctas devolverá la cadena "ERROR"
      */
-    public String enviarCredenciales(String user, String passwd) {
+    public String enviarCredenciales(String user, String passwd) throws SocketException {
 
         String ipAddress = getLocalIpAddress();
         String newToken = "ERROR";
@@ -74,9 +75,10 @@ public class Cliente {
 
                 // "tipo mensaje" - longitud del login - login    -     hash contraseña    - hash IP
             enviar( "CRED-" + user.length() + "-" + user + "" + hashedCredentialData + hashedIPData);
+
             newToken = recibir();
 
-            if(!newToken.equals("ERROR") ) {
+            if(newToken != null && !newToken.equals("ERROR") ) {
 
                 this.token = newToken;
 
@@ -154,7 +156,12 @@ public class Cliente {
         return out;
     }
 
-    public String recibir() {
+    /**
+     * Método para escuchar una respuesta del servidor
+     * @return una cadena con la respuesta del servidor
+     * @throws SocketException si no se pudo conectar con el servidor
+     */
+    public String recibir() throws SocketException{
 
         String data = null;
 
@@ -170,7 +177,7 @@ public class Cliente {
 
         } catch (IOException ex ) {
 
-
+            throw new SocketException();
 
         }
 

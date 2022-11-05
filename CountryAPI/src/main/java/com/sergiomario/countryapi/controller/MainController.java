@@ -10,13 +10,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
+import java.net.SocketException;
+
 /**
  * Controlador de la vista del login
  */
 public class MainController {
 
-    @FXML
-    Button btnDescarga;
     @FXML
     TextField txtUsuario;
 
@@ -33,31 +33,31 @@ public class MainController {
     @FXML
     protected void onLoginClick() {
 
-        String token = Cliente.instance.enviarCredenciales(txtUsuario.getText(), txtPassword.getText());
+        try {
 
-        if(!token.equals("ERROR")) {
+            String token = Cliente.instance.enviarCredenciales(txtUsuario.getText(), txtPassword.getText());
 
-            // Volver a hacer invisible por si se vuelve a la pantalla de login
-            lblWrongPassword.setVisible(false);
+            if(!token.equals("ERROR")) {
 
-            Main.activate("menu");
+                // Volver a hacer invisible por si se vuelve a la pantalla de login
+                lblWrongPassword.setVisible(false);
 
-        } else {
+                Main.activate("menu");
 
+            } else {
+
+                lblWrongPassword.setText("Usuario o contraseña incorrectos");
+                lblWrongPassword.setVisible(true);
+
+            }
+
+        } catch (SocketException ex ) {
+
+            lblWrongPassword.setText("No se pudo conectar con el servidor");
             lblWrongPassword.setVisible(true);
 
         }
 
     }
-
-    @FXML
-    private void onDescargarButtonClick() {
-
-        CountryFetcher.fetch();
-        btnDescarga.setDisable(true);
-
-    }
-
-
 
 }
