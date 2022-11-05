@@ -263,9 +263,9 @@ public class SearchController implements Initializable {
         cbCampoBusqueda.getItems().add("Capital");
 
         TableColumn<Pais, String> nameCol = new TableColumn<>("Nombre");
-        nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nameCol.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         TableColumn<Pais, Integer> popCol = new TableColumn<>("Población");
-        popCol.setCellValueFactory(new PropertyValueFactory<>("population"));
+        popCol.setCellValueFactory(new PropertyValueFactory<>("numHabitantes"));
         NumberFormat formatNum = NumberFormat.getNumberInstance(Locale.getDefault());
 
         popCol.setCellFactory(tc -> new TableCell<Pais, Integer>() {

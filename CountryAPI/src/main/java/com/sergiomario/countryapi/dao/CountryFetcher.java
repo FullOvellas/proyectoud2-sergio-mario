@@ -77,11 +77,11 @@ public class CountryFetcher {
     public static ArrayList<Pais> searchCountriesByName(String searchStr ) {
         ArrayList<Pais> out = new ArrayList<>();
 
-        Cliente.instance.enviar("SEARCH-NAME- " + searchStr.length() + "-" +  searchStr + "-" + Cliente.instance.getToken());
+        Cliente.instance.enviar("SEARCH-NAME-" + searchStr.length() + "-" +  searchStr + "-" + Cliente.instance.getToken());
 
         String data = Cliente.instance.recibir();
 
-        if(!data.equals("ERROR") ) {
+        if(data != null && !data.equals("ERROR") ) {
 
             try {
 

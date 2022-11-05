@@ -1,17 +1,24 @@
 package com.sergiomario.countryapi;
 
+import com.sergiomario.countryapi.dao.ServerDao;
+import com.sergiomario.countryapi.model.country.Pais;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Base64;
 
 public class Server {
 
     private static final int SERVER_PORT = 8090;
-    private static InetAddress address;
+    private static InetAddress serverAddress;
     private static DatagramSocket socket;
     private static DatagramPacket paquete;
     private static byte[] buffer;
@@ -54,13 +61,14 @@ public class Server {
 
                 } else if(data.startsWith("SEARCH-") ) {
 
-                    search(data);
+                    ArrayList<Pais> result =  search(data);
+                    enviarPaises(result, paquete.getAddress(), paquete.getPort());
 
                 }
 
             } catch (IOException ex ) {
 
-                System.out.println("Error al escuchar a " + address.getHostAddress());
+                System.out.println("Error al escuchar");
 
             }
 
@@ -68,21 +76,30 @@ public class Server {
 
     }
 
-    private static void search(String data ) {
+    private static ArrayList<Pais> search(String data ) {
 
         String countryName = data.substring(data.indexOf("-") + 1);
+        ArrayList<Pais> result = new ArrayList<>();
 
-        // Quitar "prefijo" search
-
-        data = data.substring(8);
-        System.out.println(data);
+        // Quitar "prefijo" SEARCH-
+        data = data.substring(7);
 
         if(data.startsWith("NAME") ) {
 
-            // Buscar por nombre
+            data = data.substring(5);
+
+            int searchLength = Integer.parseInt(data.substring(0, data.indexOf("-")));
+            data = data.substring(data.indexOf("-") + 1);
+
+            String searchName = data.substring(0, searchLength);
+
+            System.out.println("Búsqueda por nombre: " + searchName);
+
+            result = ServerDao.instance.searchByName(searchName);
 
         }
 
+        return result;
     }
     private static void enviar(String data, InetAddress address, int userPort ) {
 
@@ -98,6 +115,28 @@ public class Server {
             System.out.println("Error al enviar a " + address.getHostAddress());
 
         }
+
+    }
+
+    private static void enviarPaises(ArrayList<Pais> paises, InetAddress address, int userPort) {
+
+        try {
+
+            ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
+            ObjectOutputStream outputStream = new ObjectOutputStream(byteOutput);
+
+            outputStream.writeObject(paises);
+            outputStream.close();
+
+            String data = Base64.getEncoder().encodeToString(byteOutput.toByteArray());
+
+            enviar(data, address, userPort);
+
+        } catch (IOException  ex ) {
+
+
+        }
+
 
     }
 

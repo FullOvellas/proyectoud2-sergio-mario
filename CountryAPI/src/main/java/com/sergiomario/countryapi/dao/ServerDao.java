@@ -1,6 +1,5 @@
 package com.sergiomario.countryapi.dao;
 
-import com.sergiomario.countryapi.model.country.Country;
 import com.sergiomario.countryapi.model.country.Pais;
 
 import java.sql.*;
@@ -10,8 +9,8 @@ public class ServerDao {
 
     public static final ServerDao instance;
 
-    private final String BBDD_USER = "";
-    private final String BBDD_PWD = "";
+    private final String BBDD_USER = "root";
+    private final String BBDD_PWD = "root";
     private Connection db;
 
     static {
@@ -24,11 +23,11 @@ public class ServerDao {
 
         try {
 
-            db = DriverManager.getConnection("", BBDD_USER, BBDD_PWD);
+            db = DriverManager.getConnection("jdbc:mysql://localhost:3306/BBDD_PAISES", BBDD_USER, BBDD_PWD);
 
         } catch (SQLException e) {
 
-
+            e.printStackTrace();
 
         }
 
