@@ -106,8 +106,6 @@ public class FlagGameController {
         optBtn2.setStyle("-fx-background-color:" + defaultColor);
         optBtn3.setStyle("-fx-background-color:" + defaultColor);
 
-        // sleep?
-
         Country[] countries = CountryFetcher.getRandomCountries(3);
 
         switch (correct) {

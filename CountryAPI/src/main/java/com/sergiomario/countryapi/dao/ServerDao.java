@@ -66,6 +66,43 @@ public class ServerDao {
         return out;
     }
 
+    public ArrayList<Pais> searchByCurrency(String searchStr) {
+
+        ArrayList<Pais> out = new ArrayList<>();
+
+        try {
+            // TODO: editar para que sea LIKE NOMBRE o similar
+            PreparedStatement ps = db.prepareStatement("SELECT ID_PAIS,P.NOMBRE,NUM_HABITANTES,CAPITAL FROM PAISES AS P INNER JOIN MONEDAS_PAISES AS MP ON P.ID_PAIS = MP.PAIS INNER JOIN MONEDAS AS M ON MP.MONEDA = M.ID_MONEDA AND M.NOMBRE = ?");
+            ResultSet rs;
+
+            ps.setString(1, searchStr);
+
+            rs = ps.executeQuery();
+
+            while (rs.next() ) {
+
+                int idPais = rs.getInt(1);
+                String nombre = rs.getString(2);
+                int habitantes = rs.getInt(3);
+                String capital = rs.getString(4);
+                ArrayList<String> idiomas = searchIdiomasById(idPais);
+                ArrayList<String> monedas = searchMonedasById(idPais);
+
+                Pais p = new Pais(nombre,capital,habitantes,idiomas, monedas);
+
+                out.add(p);
+
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+        }
+
+        return out;
+    }
+
     private ArrayList<String> searchIdiomasById(int idPais ) {
 
         ArrayList<String> out = new ArrayList<>();

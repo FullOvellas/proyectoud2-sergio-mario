@@ -61,8 +61,10 @@ public class Server {
 
                 } else if(data.startsWith("SEARCH-") ) {
 
-                    ArrayList<Pais> result =  search(data);
+                    ArrayList<Pais> result = search(data);
                     enviarPaises(result, paquete.getAddress(), paquete.getPort());
+
+                    System.out.println("Hehco");
 
                 }
 
@@ -97,6 +99,19 @@ public class Server {
 
             result = ServerDao.instance.searchByName(searchName);
 
+        } else if(data.startsWith("CURRENCY") ) {
+
+            data = data.substring(9);
+
+            int searchLength = Integer.parseInt(data.substring(0, data.indexOf("-")));
+            data = data.substring(data.indexOf("-") + 1);
+
+            String searchName = data.substring(0, searchLength);
+
+            System.out.println("Búsqueda por moneda:" + searchName+".");
+
+            result = ServerDao.instance.searchByCurrency(searchName);
+
         }
 
         return result;
@@ -125,7 +140,19 @@ public class Server {
             ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
             ObjectOutputStream outputStream = new ObjectOutputStream(byteOutput);
 
-            outputStream.writeObject(paises);
+
+            paises.forEach( pais -> {
+
+                try {
+
+                    outputStream.writeObject(pais);
+
+                } catch ( IOException e ) {
+
+                }
+
+            });
+
             outputStream.close();
 
             String data = Base64.getEncoder().encodeToString(byteOutput.toByteArray());

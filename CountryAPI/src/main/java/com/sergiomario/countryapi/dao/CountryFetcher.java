@@ -2,13 +2,11 @@ package com.sergiomario.countryapi.dao;
 
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -74,26 +72,7 @@ public class CountryFetcher {
 
             Cliente.instance.enviar("SEARCH-NAME-" + searchStr.length() + "-" +  searchStr + "-" + Cliente.instance.getToken());
 
-            String data = Cliente.instance.recibir();
-
-            if(data != null && !data.equals("ERROR") ) {
-
-                try {
-
-                    byte[] b = Base64.getDecoder().decode(data.getBytes());
-
-                    ByteArrayInputStream byteStream = new ByteArrayInputStream(b);
-                    ObjectInputStream objStream = new ObjectInputStream(byteStream);
-
-                    out = (ArrayList<Pais>) objStream.readObject();
-
-                    out.sort(Comparator.comparingInt(country -> -country.getNumHabitantes()));
-
-                } catch (IOException | ClassNotFoundException ex ) {
-
-                }
-
-            }
+            out = recibirPaises();
 
         } catch (SocketException ex ) {
 
@@ -104,46 +83,59 @@ public class CountryFetcher {
         return out;
     }
 
-    public static ArrayList<Country> searchCountriesByCurrency(String searchStr ) {
-        ArrayList<Country> out;
+    private static ArrayList<Pais> recibirPaises() throws SocketException {
 
-        if(hasConnection ) {
+        ArrayList<Pais> paises = new ArrayList<>();
+        String data = Cliente.instance.recibir();
 
-            out = genericSearch("currency", searchStr);
+        if(data != null && !data.equals("ERROR") ) {
 
-        } else {
+            try {
 
-            out = new ArrayList<>();
+                byte[] b = Base64.getDecoder().decode(data.getBytes(StandardCharsets.UTF_8));
 
-            cachedCountries.forEach(country -> {
+                ByteArrayInputStream byteStream = new ByteArrayInputStream(b);
+                ObjectInputStream objStream = new ObjectInputStream(byteStream);
 
-                boolean hasCurrency = false;
+                try {
 
-                if(country.getCurrencies() != null ) {
+                    while (true ) {
 
-                    for(CurrenciesItem currency : country.getCurrencies() ) {
-
-                        if(currency.getName().toLowerCase().matches(searchStr.toLowerCase() ) || currency.getCode().toLowerCase().matches(searchStr.toLowerCase()) ) {
-
-                            hasCurrency = true;
-
-                        }
+                        paises.add((Pais) objStream.readObject());
 
                     }
 
-                    if(hasCurrency ) {
-
-                        out.add(country);
-
-                    }
+                } catch (EOFException  ex ) {
 
                 }
 
-            });
+                paises.sort(Comparator.comparingInt(country -> -country.getNumHabitantes()));
+
+            } catch (IOException | ClassNotFoundException ex ) {
+
+                ex.printStackTrace();
+
+            }
 
         }
 
-        out.sort(Comparator.comparingInt(country -> -country.getPopulation()));
+        return paises;
+    }
+
+    public static ArrayList<Pais> searchCountriesByCurrency(String searchStr ) {
+        ArrayList<Pais> out = new ArrayList<>();
+
+        try {
+
+            Cliente.instance.enviar("SEARCH-CURRENCY-" + searchStr.length() + "-" +  searchStr + "-" + Cliente.instance.getToken());
+
+            out = recibirPaises();
+
+        } catch (SocketException ex ) {
+
+
+
+        }
 
         return out;
     }

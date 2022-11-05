@@ -87,7 +87,7 @@ public class SearchController implements Initializable {
 
             } else if(modoBusqueda == 2){
 
-                // lastResult = CountryFetcher.searchCountriesByCurrency(rawBusqueda);
+                lastResult = CountryFetcher.searchCountriesByCurrency(rawBusqueda);
 
             } else {
 
