@@ -11,7 +11,7 @@
       <HBox layoutX="62.0" layoutY="63.0" spacing="25.0" AnchorPane.leftAnchor="62.0" AnchorPane.rightAnchor="176.95123514557451">
          <children>
             <Button mnemonicParsing="false" onAction="#onBotonBusquedaClick" prefHeight="45.0" prefWidth="145.0" text="Busqueda" />
-            <Label alignment="CENTER" text="Para hacer consultas con la API">
+            <Label alignment="CENTER" text="Para hacer consultas con la BBDD">
                <padding>
                   <Insets top="10.0" />
                </padding>
