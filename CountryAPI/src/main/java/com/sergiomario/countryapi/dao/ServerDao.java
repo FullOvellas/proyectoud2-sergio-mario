@@ -124,7 +124,7 @@ public class ServerDao {
         ArrayList<String> out = new ArrayList<>();
 
         try {
-            
+
             PreparedStatement ps = db.prepareStatement("SELECT NOMBRE FROM MONEDAS AS M INNER JOIN MONEDAS_PAISES AS MP ON M.ID_MONEDA = MP.MONEDA AND MP.PAIS = ?");
             ResultSet rs;
 
@@ -143,6 +143,19 @@ public class ServerDao {
         }
 
         return out;
+    }
+
+    public Pais[] randomCountries(int quantity) throws SQLException {
+
+        Pais[] out = new Pais[quantity];
+        String sql1 = "SELECT * FROM PAISES";
+        String sql2 = "SELECT I.NOMBRE, M.NOMBRE FROM IDIOMAS AS I INNER JOIN ";
+        Statement search1 = db.createStatement();
+        PreparedStatement search2 = db.prepareStatement(sql2);
+
+        int i = 0;
+
+
     }
 
 }
