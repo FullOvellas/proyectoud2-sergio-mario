@@ -69,6 +69,8 @@ public class Cliente {
             String hashedCredentialData = hashString(passwd);
             String hashedIPData = hashString(ipAddress);
 
+            System.out.println(hashedCredentialData);
+
             // Para separar los hashes se tiene en cuenta que
             // independientemente de la entrada, la longitud del
             // string del hash es 128 caracteres

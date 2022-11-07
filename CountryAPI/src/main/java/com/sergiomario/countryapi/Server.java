@@ -64,8 +64,6 @@ public class Server {
                     ArrayList<Pais> result = search(data);
                     enviarPaises(result, paquete.getAddress(), paquete.getPort());
 
-                    System.out.println("Hehco");
-
                 }
 
             } catch (IOException ex ) {
