@@ -1,6 +1,5 @@
 package com.sergiomario.countryapi.dao;
 
-import com.sergiomario.countryapi.Server;
 import com.sergiomario.countryapi.model.country.Pais;
 import javafx.scene.image.Image;
 
@@ -176,4 +175,7 @@ public class ServerDao {
 
     }
 
+    public ArrayList<Pais> searchByCapital(String searchName) {
+        return null;
+    }
 }
