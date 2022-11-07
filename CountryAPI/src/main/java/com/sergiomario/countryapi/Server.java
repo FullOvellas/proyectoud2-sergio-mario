@@ -3,8 +3,11 @@ package com.sergiomario.countryapi;
 import com.sergiomario.countryapi.dao.ServerDao;
 import com.sergiomario.countryapi.model.country.Pais;
 
+<<<<<<< HEAD
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+=======
+>>>>>>> 9af3a23 (Añadida la busqueda a operaciones posibles)
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.*;
@@ -86,6 +89,7 @@ public class Server {
 
         if(data.startsWith("NAME") ) {
 
+<<<<<<< HEAD
             data = data.substring(5);
 
             int searchLength = Integer.parseInt(data.substring(0, data.indexOf("-")));
@@ -122,6 +126,12 @@ public class Server {
             System.out.println("Búsqueda por capital:" + searchName);
 
             result = ServerDao.instance.searchByCapital(searchName);
+=======
+
+
+            // Buscar por nombre
+            ArrayList<Pais> result = ServerDao.instance.searchByName("");
+>>>>>>> 9af3a23 (Añadida la busqueda a operaciones posibles)
 
         }
 
