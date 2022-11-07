@@ -48,8 +48,8 @@ public class PopulationGameController {
 
         correctButton = countries[0].getPopulation() > countries[1].getPopulation() ? lowerButton : higherButton;
 
-        flagLeft.setImage(CountryFetcher.getFlag(countryLeft));
-        flagRight.setImage(CountryFetcher.getFlag(countryRight));
+        flagLeft.setImage(CountryFetcher.getFlag(countryLeft.getName()));
+        flagRight.setImage(CountryFetcher.getFlag(countryRight.getName()));
 
         countryLeftLbl.setText(countries[0].getName());
         countryRightLbl.setText(countries[1].getName());
@@ -134,7 +134,7 @@ public class PopulationGameController {
 
         }
 
-        flagRight.setImage(CountryFetcher.getFlag(countryRight));
+        flagRight.setImage(CountryFetcher.getFlag(countryRight.getName()));
         countryRightLbl.setText(countryRight.getName());
 
         correctButton = countryLeft.getPopulation() > countryRight.getPopulation() ? lowerButton : higherButton;

@@ -13,6 +13,7 @@ public class Cliente {
 
     private InetAddress adr; // server
     private DatagramSocket socket;
+    private String token;
 
     static {
 
@@ -20,7 +21,15 @@ public class Cliente {
 
     }
 
-    private Cliente() {}
+    private Cliente() {
+
+        token = "";
+
+    }
+
+    public String getToken() {
+        return token;
+    }
 
     public boolean configurarConexion(String ip) {
 
@@ -45,12 +54,13 @@ public class Cliente {
      * Método para iniciar sesión contra el servidor
      * @param user el login de usuario
      * @param passwd la contraseña del usuario
-     * @return un token de acceso o null si no se pudo hacer login
+     * @return un token de acceso o null si no se pudo hacer login. Si las credenciales no son
+     * correctas devolverá la cadena "ERROR"
      */
-    public String enviarCredenciales(String user, String passwd) {
+    public String enviarCredenciales(String user, String passwd) throws SocketException {
 
         String ipAddress = getLocalIpAddress();
-        String token = "ERROR";
+        String newToken = "ERROR";
 
         if(ipAddress != null ) {
 
@@ -65,11 +75,18 @@ public class Cliente {
 
                 // "tipo mensaje" - longitud del login - login    -     hash contraseña    - hash IP
             enviar( "CRED-" + user.length() + "-" + user + "" + hashedCredentialData + hashedIPData);
-            token = recibir();
+
+            newToken = recibir();
+
+            if(newToken != null && !newToken.equals("ERROR") ) {
+
+                this.token = newToken;
+
+            }
 
         }
 
-        return token;
+        return newToken;
     }
 
     public String hashString(String rawData ) {
@@ -106,25 +123,38 @@ public class Cliente {
 
         String ipAddress = null;
 
-        try {
+        if(adr.getHostAddress().equals("127.0.0.1") ) {
 
-            InetAddress address = InetAddress.getLocalHost();
+            ipAddress = "127.0.1.1";
 
-            ipAddress = address.getHostAddress();
+        } else {
 
-        } catch (UnknownHostException ex) {
+            try( DatagramSocket socket = new DatagramSocket()){
+
+                socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+                ipAddress = socket.getLocalAddress().getHostAddress();
+
+            } catch (SocketException | UnknownHostException e) {
+
+
+
+            }
 
         }
 
         return ipAddress;
     }
 
-    private boolean enviar(String datos ) {
-
-        boolean out = true;
+    public void enviar(String datos ) throws SocketException {
 
         byte[] buffer = datos.getBytes();
         DatagramPacket paquete = new DatagramPacket(buffer, buffer.length, adr, SERVER_PORT);
+
+        if(socket == null ) {
+
+            throw new SocketException();
+
+        }
 
         try {
 
@@ -132,16 +162,20 @@ public class Cliente {
 
         } catch (IOException e) {
 
-            out = false;
+            throw new SocketException();
 
         }
 
-        return out;
     }
 
-    private String recibir() {
+    /**
+     * Método para escuchar una respuesta del servidor
+     * @return una cadena con la respuesta del servidor
+     * @throws SocketException si no se pudo conectar con el servidor
+     */
+    public String recibir() throws SocketException{
 
-        String data = null;
+        String data;
 
         try {
 
@@ -151,11 +185,9 @@ public class Cliente {
             socket.receive(packet);
             data = new String(packet.getData(), packet.getOffset(), packet.getLength(), "UTF-8");
 
-            System.out.println("Recibido   " + data);
-
         } catch (IOException ex ) {
 
-
+            throw new SocketException();
 
         }
 

@@ -3,6 +3,7 @@ package com.sergiomario.countryapi.controller;
 import com.sergiomario.countryapi.Main;
 import com.sergiomario.countryapi.dao.CountryFetcher;
 import com.sergiomario.countryapi.model.country.Country;
+import com.sergiomario.countryapi.model.country.Pais;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -23,7 +24,7 @@ import java.util.ResourceBundle;
  */
 public class SearchController implements Initializable {
 
-    private ArrayList<Country> lastResult;
+    private ArrayList<Pais> lastResult;
     private int viewIndex;
 
     @FXML
@@ -49,7 +50,7 @@ public class SearchController implements Initializable {
     @FXML
     private ChoiceBox<String> cbCampoBusqueda;
     @FXML
-    private TableView<Country> resultsTbl;
+    private TableView<Pais> resultsTbl;
 
     /**
      * Método para cuando se da click al botón de salir al menú. Se volverá a la vista del menú
@@ -82,7 +83,7 @@ public class SearchController implements Initializable {
 
             } else if(modoBusqueda == 1 ) {
 
-                lastResult = CountryFetcher.searchCountriesByLanguage(rawBusqueda);
+                // lastResult = CountryFetcher.searchCountriesByLanguage(rawBusqueda);
 
             } else if(modoBusqueda == 2){
 
@@ -195,66 +196,48 @@ public class SearchController implements Initializable {
      * Nétodo para mostrar la información de un país
      * @param c el país a mostrar
      */
-    private void showCountry(Country c ) {
+    private void showCountry(Pais c ) {
 
-        txtNombre.setText(c.getName());
+        txtNombre.setText(c.getNombre());
         txtCapital.setText(c.getCapital());
-        imgBandera.setImage(new Image(c.getFlags().getPng()));
 
-        txtPoblacion.setText("%,d".formatted(c.getPopulation()));
+        // TODO: imgBandera.setImage(new Image(c.getFlags().getPng()));
 
-        if(CountryFetcher.isConnected() ) {
+        txtPoblacion.setText("%,d".formatted(c.getNumHabitantes()));
 
-            imgBandera.setImage(new Image(c.getFlags().getPng()));
+        StringBuilder strMonedas = new StringBuilder("");
 
-        } else {
+        for(int i = 0; i < c.getMonedas().size(); i++ ) {
 
-            imgBandera.setImage(new Image("file:res/img/%s.png".formatted(c.getName())));
+            strMonedas.append(c.getMonedas().get(i));
 
-        }
+            if(i != c.getMonedas().size() - 1 ) {
 
-        if(c.getCurrencies() != null ) {
-
-            StringBuilder strMonedas = new StringBuilder("");
-
-            for(int i = 0; i < c.getCurrencies().size(); i++ ) {
-
-                strMonedas.append(c.getCurrencies().get(i).getCode());
-
-                if(i != c.getCurrencies().size() - 1 ) {
-
-                    strMonedas.append(", ");
-
-                }
+                strMonedas.append(", ");
 
             }
 
-            txtMonedas.setText(strMonedas.toString());
-
         }
 
-        if(c.getLanguages() != null ) {
+        txtMonedas.setText(strMonedas.toString());
 
-            StringBuilder strIdiomas = new StringBuilder("");
+        imgBandera.setImage(CountryFetcher.getFlag(c.getNombre()));
 
-            for(int i = 0; i < c.getLanguages().size(); i++ ) {
+        StringBuilder strIdiomas = new StringBuilder("");
 
-                strIdiomas.append(c.getLanguages().get(i).getName());
-                strIdiomas.append("(");
-                strIdiomas.append(c.getLanguages().get(i).getIso6391());
-                strIdiomas.append(")");
+        for(int i = 0; i < c.getIdiomas().size(); i++ ) {
 
-                if(i != c.getLanguages().size() - 1 ) {
+            strIdiomas.append(c.getIdiomas().get(i));
 
-                    strIdiomas.append(", ");
+            if(i != c.getIdiomas().size() - 1 ) {
 
-                }
+                strIdiomas.append(", ");
 
             }
 
-            txtIdiomas.setText(strIdiomas.toString());
-
         }
+
+        txtIdiomas.setText(strIdiomas.toString());
 
     }
 
@@ -281,13 +264,13 @@ public class SearchController implements Initializable {
         cbCampoBusqueda.getItems().add("Moneda");
         cbCampoBusqueda.getItems().add("Capital");
 
-        TableColumn<Country, String> nameCol = new TableColumn<>("Nombre");
-        nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-        TableColumn<Country, Integer> popCol = new TableColumn<>("Población");
-        popCol.setCellValueFactory(new PropertyValueFactory<>("population"));
+        TableColumn<Pais, String> nameCol = new TableColumn<>("Nombre");
+        nameCol.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        TableColumn<Pais, Integer> popCol = new TableColumn<>("Población");
+        popCol.setCellValueFactory(new PropertyValueFactory<>("numHabitantes"));
         NumberFormat formatNum = NumberFormat.getNumberInstance(Locale.getDefault());
 
-        popCol.setCellFactory(tc -> new TableCell<Country, Integer>() {
+        popCol.setCellFactory(tc -> new TableCell<Pais, Integer>() {
 
             @Override
             protected void updateItem(Integer pop, boolean empty) {

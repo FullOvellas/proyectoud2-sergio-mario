@@ -1,29 +1,22 @@
 package com.sergiomario.countryapi.dao;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.sql.PreparedStatement;
+import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.sergiomario.countryapi.model.country.Country;
 import com.sergiomario.countryapi.model.country.CurrenciesItem;
 import com.sergiomario.countryapi.model.country.LanguagesItem;
 
+import com.sergiomario.countryapi.model.country.Pais;
 import javafx.scene.image.Image;
 
 
@@ -36,146 +29,99 @@ public class CountryFetcher {
 
     public static void init() {
 
-        Cliente client = Cliente.instance;
-
         cachedCountries = new ArrayList<>();
-        hasConnection = checkConnection();
-
-        System.out.println("Conexión: " + hasConnection);
-
-        if(!hasConnection ) {
-
-            loadFromCache();
-
-        }
-
-        client.configurarConexion("127.0.0.1"); // TODO: TEMP
 
     }
 
-    public static boolean isConnected() {
-        return hasConnection;
-    }
-    private static boolean checkConnection() {
-
-        boolean out = true;
+    public static ArrayList<Pais> searchCountriesByCapital(String searchStr ) {
+        ArrayList<Pais> out = new ArrayList<>();
 
         try {
 
-            URL url = new URL("https://www.google.com");
-            URLConnection connection = url.openConnection();
-            connection.setConnectTimeout(2000);
-            connection.connect();
+            Cliente.instance.enviar("SEARCH-CAPITAL-" + searchStr.length() + "-" +  searchStr + "-" + Cliente.instance.getToken());
 
-        } catch (IOException e) {
+            out = recibirPaises();
 
-            out = false;
+        } catch (SocketException ex ) {
+
+
 
         }
 
         return out;
     }
 
-    public static ArrayList<Country> searchCountriesByCapital(String searchStr ) {
-        ArrayList<Country> out;
+    public static ArrayList<Pais> searchCountriesByName(String searchStr ) {
+        ArrayList<Pais> out = new ArrayList<>();
 
-        if(hasConnection ) {
+        try {
 
-            out = genericSearch("capital", searchStr);
+            Cliente.instance.enviar("SEARCH-NAME-" + searchStr.length() + "-" +  searchStr + "-" + Cliente.instance.getToken());
 
-        } else {
+            out = recibirPaises();
 
-            out = new ArrayList<>();
+        } catch (SocketException ex ) {
 
-            cachedCountries.forEach(country -> {
 
-                if(country.getCapital() != null ) {
-
-                    if(country.getCapital().matches(searchStr) || country.getCapital().contains(searchStr ) ) {
-
-                        out.add(country);
-
-                    }
-
-                }
-
-            });
 
         }
-
-        out.sort(Comparator.comparingInt(country -> -country.getPopulation()));
 
         return out;
     }
 
-    public static ArrayList<Country> searchCountriesByName(String searchStr ) {
-        ArrayList<Country> out;
+    private static ArrayList<Pais> recibirPaises() throws SocketException {
 
-        if(hasConnection ) {
+        ArrayList<Pais> paises = new ArrayList<>();
+        String data = Cliente.instance.recibir();
 
-            out = genericSearch("name", searchStr);
+        if(data != null && !data.equals("ERROR") ) {
 
-        } else {
+            try {
 
-            out = new ArrayList<>();
+                byte[] b = Base64.getDecoder().decode(data.getBytes(StandardCharsets.UTF_8));
 
-            cachedCountries.forEach(country -> {
+                ByteArrayInputStream byteStream = new ByteArrayInputStream(b);
+                ObjectInputStream objStream = new ObjectInputStream(byteStream);
 
-                if(country.getName().toLowerCase().matches(searchStr.toLowerCase()) || country.getName().toLowerCase().contains(searchStr.toLowerCase() ) ) {
+                try {
 
-                    out.add(country);
+                    while (true ) {
+
+                        paises.add((Pais) objStream.readObject());
+
+                    }
+
+                } catch (EOFException  ex ) {
 
                 }
 
-            });
+                paises.sort(Comparator.comparingInt(country -> -country.getNumHabitantes()));
+
+            } catch (IOException | ClassNotFoundException ex ) {
+
+                ex.printStackTrace();
+
+            }
 
         }
 
-        out.sort(Comparator.comparingInt(country -> -country.getPopulation()));
-
-        return out;
+        return paises;
     }
 
-    public static ArrayList<Country> searchCountriesByCurrency(String searchStr ) {
-        ArrayList<Country> out;
+    public static ArrayList<Pais> searchCountriesByCurrency(String searchStr ) {
+        ArrayList<Pais> out = new ArrayList<>();
 
-        if(hasConnection ) {
+        try {
 
-            out = genericSearch("currency", searchStr);
+            Cliente.instance.enviar("SEARCH-CURRENCY-" + searchStr.length() + "-" +  searchStr + "-" + Cliente.instance.getToken());
 
-        } else {
+            out = recibirPaises();
 
-            out = new ArrayList<>();
+        } catch (SocketException ex ) {
 
-            cachedCountries.forEach(country -> {
 
-                boolean hasCurrency = false;
-
-                if(country.getCurrencies() != null ) {
-
-                    for(CurrenciesItem currency : country.getCurrencies() ) {
-
-                        if(currency.getName().toLowerCase().matches(searchStr.toLowerCase() ) || currency.getCode().toLowerCase().matches(searchStr.toLowerCase()) ) {
-
-                            hasCurrency = true;
-
-                        }
-
-                    }
-
-                    if(hasCurrency ) {
-
-                        out.add(country);
-
-                    }
-
-                }
-
-            });
 
         }
-
-        out.sort(Comparator.comparingInt(country -> -country.getPopulation()));
 
         return out;
     }
@@ -250,18 +196,6 @@ public class CountryFetcher {
 
     }
 
-    public static void loadFromCache() {
-
-        Path saveFile = Path.of("res", "CountryCache.json");
-
-        if(Files.exists(saveFile) ) {
-
-            cachedCountries = loadFromFile(saveFile);
-
-        }
-
-    }
-
     private static ArrayList<Country> loadFromFile(Path file) {
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -281,39 +215,6 @@ public class CountryFetcher {
 
         return out;
     }
-
-    public static boolean fetch() {
-
-        boolean out = false;
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        try {
-
-            BufferedReader br = new BufferedReader((new InputStreamReader(new URL("https://restcountries.com/v2/all").openStream())));
-
-            String json = br.readLine();
-
-            cachedCountries = objectMapper.readValue(json, new TypeReference<>() {});
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-        }
-
-        try (BufferedWriter bw = Files.newBufferedWriter(Path.of("res/CountryCache.json"))) {
-
-            objectMapper.writeValue(bw, cachedCountries);
-
-        } catch (IOException e) {
-
-            throw new RuntimeException(e);
-
-        }
-
-        return out;
-    }
-
 
     public static Country[] getRandomCountries(int countryNum) {
 
@@ -352,50 +253,11 @@ public class CountryFetcher {
 
     }
 
-    public static void updateImages() throws IOException {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        ArrayList<Country> consulta;
-
-        BufferedReader br = new BufferedReader((new InputStreamReader(new URL("https://restcountries.com/v2/all").openStream())));
-        String json = br.readLine();
-        consulta = objectMapper.readValue(json, new TypeReference<>() {});
-
-
-        for (Country c : consulta) {
-
-            Path out = Path.of("res/img/" + c.getName() + ".png");
-            byte[] bytes;
-
-            if (Files.exists(out)) {
-
-                Files.delete(out);
-
-            }
-
-            Files.createFile(out);
-
-            try (InputStream is = new URL(c.getFlags().getPng()).openStream()) {
-
-                bytes = is.readAllBytes();
-                Files.write(out, bytes);
-
-            } catch (FileNotFoundException e) {
-
-                System.out.println("File " + out + " not found.");
-
-            }
-
-        }
-
-    }
-
-    public static Image getFlag(Country c) {
+    public static Image getFlag(String name) {
 
         String path = "file:res/img/%s.png";
 
-
-        return new Image(String.format(path, c.getName()));
+        return new Image(String.format(path, name));
 
     }
 

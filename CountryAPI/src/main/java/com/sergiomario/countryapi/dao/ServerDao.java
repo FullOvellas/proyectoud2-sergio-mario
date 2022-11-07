@@ -1,6 +1,5 @@
 package com.sergiomario.countryapi.dao;
 
-import com.sergiomario.countryapi.model.country.Country;
 import com.sergiomario.countryapi.model.country.Pais;
 
 import java.sql.*;
@@ -10,8 +9,8 @@ public class ServerDao {
 
     public static final ServerDao instance;
 
-    private final String BBDD_USER = "";
-    private final String BBDD_PWD = "";
+    private final String BBDD_USER = "root";
+    private final String BBDD_PWD = "root";
     private Connection db;
 
     static {
@@ -24,11 +23,9 @@ public class ServerDao {
 
         try {
 
-            db = DriverManager.getConnection("", BBDD_USER, BBDD_PWD);
+            db = DriverManager.getConnection("jdbc:mysql://localhost:3306/BBDD_PAISES", BBDD_USER, BBDD_PWD);
 
         } catch (SQLException e) {
-
-
 
         }
 
@@ -69,16 +66,53 @@ public class ServerDao {
         return out;
     }
 
+    public ArrayList<Pais> searchByCurrency(String searchStr) {
+
+        ArrayList<Pais> out = new ArrayList<>();
+
+        try {
+            // TODO: editar para que sea LIKE NOMBRE o similar
+            PreparedStatement ps = db.prepareStatement("SELECT ID_PAIS,P.NOMBRE,NUM_HABITANTES,CAPITAL FROM PAISES AS P INNER JOIN MONEDAS_PAISES AS MP ON P.ID_PAIS = MP.PAIS INNER JOIN MONEDAS AS M ON MP.MONEDA = M.ID_MONEDA AND M.NOMBRE = ?");
+            ResultSet rs;
+
+            ps.setString(1, searchStr);
+
+            rs = ps.executeQuery();
+
+            while (rs.next() ) {
+
+                int idPais = rs.getInt(1);
+                String nombre = rs.getString(2);
+                int habitantes = rs.getInt(3);
+                String capital = rs.getString(4);
+                ArrayList<String> idiomas = searchIdiomasById(idPais);
+                ArrayList<String> monedas = searchMonedasById(idPais);
+
+                Pais p = new Pais(nombre,capital,habitantes,idiomas, monedas);
+
+                out.add(p);
+
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+        }
+
+        return out;
+    }
+
     private ArrayList<String> searchIdiomasById(int idPais ) {
 
         ArrayList<String> out = new ArrayList<>();
 
         try {
                                                                                         // TODO: es PAIS o ID_PAIS ??
-            PreparedStatement ps = db.prepareStatement("SELECT NOMBRE FROM MONEDAS INNER JOIN MONEDAS_PAISES WHERE PAIS = ?");
+            PreparedStatement ps = db.prepareStatement("SELECT NOMBRE FROM IDIOMAS AS I INNER JOIN IDIOMAS_PAISES AS IP ON I.ID_IDIOMA = IP.IDIOMA AND IP.PAIS = ?");
             ResultSet rs;
 
-            ps.setInt(idPais, 1);
+            ps.setInt( 1, idPais);
             rs = ps.executeQuery();
 
             while (rs.next() ) {
@@ -88,8 +122,6 @@ public class ServerDao {
             }
 
         } catch (SQLException ex ) {
-
-
 
         }
 
@@ -102,10 +134,10 @@ public class ServerDao {
 
         try {
                                                                                                 // TODO: es PAIS o ID_PAIS ??
-            PreparedStatement ps = db.prepareStatement("SELECT NOMBRE FROM IDIOMAS INNER JOIN IDIOMAS_PAISES WHERE PAIS = ?");
+            PreparedStatement ps = db.prepareStatement("SELECT NOMBRE FROM MONEDAS AS M INNER JOIN MONEDAS_PAISES AS MP ON M.ID_MONEDA = MP.MONEDA AND MP.PAIS = ?");
             ResultSet rs;
 
-            ps.setInt(idPais, 1);
+            ps.setInt( 1, idPais);
             rs = ps.executeQuery();
 
             while (rs.next() ) {
@@ -117,10 +149,12 @@ public class ServerDao {
         } catch (SQLException ex ) {
 
 
-
         }
 
         return out;
     }
 
+    public ArrayList<Pais> searchByCapital(String searchName) {
+        return null;
+    }
 }

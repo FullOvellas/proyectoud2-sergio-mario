@@ -56,7 +56,7 @@ public class Main extends Application {
 
         }
 
-        stage.setTitle("Country API");
+        stage.setTitle("Country BBDD");
         stage.setScene(main);
         stage.show();
 
