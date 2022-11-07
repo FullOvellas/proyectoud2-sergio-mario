@@ -38,7 +38,7 @@ public class CountryFetcher {
 
         try {
 
-            Cliente.instance.enviar("SEARCH-CAPITAL-" + searchStr.length() + "-" +  searchStr + "-" + Cliente.instance.getToken());
+            Cliente.instance.enviar("SEARCH-CAPITAL-" + searchStr.length() + "-" +  searchStr + "-TOKEN-" + Cliente.instance.getToken());
 
             out = recibirPaises();
 
@@ -56,7 +56,7 @@ public class CountryFetcher {
 
         try {
 
-            Cliente.instance.enviar("SEARCH-NAME-" + searchStr.length() + "-" +  searchStr + "-" + Cliente.instance.getToken());
+            Cliente.instance.enviar("SEARCH-NAME-" + searchStr.length() + "-" +  searchStr + "-TOKEN-" + Cliente.instance.getToken());
 
             out = recibirPaises();
 
@@ -113,7 +113,7 @@ public class CountryFetcher {
 
         try {
 
-            Cliente.instance.enviar("SEARCH-CURRENCY-" + searchStr.length() + "-" +  searchStr + "-" + Cliente.instance.getToken());
+            Cliente.instance.enviar("SEARCH-CURRENCY-" + searchStr.length() + "-" +  searchStr + "-TOKEN-" + Cliente.instance.getToken());
 
             out = recibirPaises();
 

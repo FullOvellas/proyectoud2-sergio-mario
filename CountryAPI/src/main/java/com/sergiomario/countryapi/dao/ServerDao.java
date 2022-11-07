@@ -190,37 +190,30 @@ public class ServerDao {
 
         try {
 
-            PreparedStatement ps = db.prepareStatement("SELECT ID_SESION FROM TOKENS_USERS WHERE USER_IP = ? AND ID_USER = ?;");
-            ResultSet rs;
+            String databaseToken = getUserToken(ip, userLogin);
 
-            ps.setString(1, ip);
-            ps.setInt(2, getUserId(userLogin));
+            PreparedStatement psToken;
 
-            rs = ps.executeQuery();
-
-            if(rs.next() ) {
+            if(databaseToken != null ) {
 
                 // Token de usuario-IP existente -> borrar y crear uno nuevo
-                PreparedStatement psToken = db.prepareStatement("UPDATE TOKENS_USERS SET TOKEN = ? WHERE ID_USER = ? AND USER_IP = ?");
+                psToken = db.prepareStatement("UPDATE TOKENS_USERS SET TOKEN = ? WHERE ID_USER = ? AND USER_IP = ?");
 
                 psToken.setString(1, userToken);
                 psToken.setInt(2, getUserId(userLogin));
                 psToken.setString(3, ip);
 
-                psToken.execute();
-
             } else {
 
                 // Token de usuario-IP existente -> borrar y crear uno nuevo
-                PreparedStatement psToken = db.prepareStatement("INSERT INTO TOKENS_USERS (ID_USER, USER_IP, TOKEN) VALUES (?, ?, ?)");
+                psToken = db.prepareStatement("INSERT INTO TOKENS_USERS (ID_USER, USER_IP, TOKEN) VALUES (?, ?, ?)");
 
                 psToken.setInt(1, getUserId(userLogin));
                 psToken.setString(2, ip);
                 psToken.setString(3, userToken);
 
-                psToken.execute();
-
             }
+            psToken.execute();
 
         } catch (SQLException ex ) {
 
@@ -232,7 +225,32 @@ public class ServerDao {
 
     }
 
-    private int getUserId(String login) {
+    public String getUserToken(String ip, String userLogin) {
+
+        String out = null;
+
+        try {
+
+            PreparedStatement ps = db.prepareStatement("SELECT TOKEN FROM TOKENS_USERS WHERE USER_IP = ? AND ID_USER = ?;");
+            ResultSet rs;
+
+            ps.setString(1, ip);
+            ps.setInt(2, getUserId(userLogin));
+
+            rs = ps.executeQuery();
+
+            out = rs.getString(1);
+
+        } catch (SQLException ex ) {
+
+
+
+        }
+
+        return out;
+    }
+
+    public int getUserId(String login) {
 
         int userId = -1;
 

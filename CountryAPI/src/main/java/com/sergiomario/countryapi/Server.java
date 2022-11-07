@@ -61,8 +61,18 @@ public class Server {
 
                 } else if(data.startsWith("SEARCH-") ) {
 
-                    ArrayList<Pais> result = search(data);
-                    enviarPaises(result, paquete.getAddress(), paquete.getPort());
+                    String userToken = data.substring(data.indexOf("TOKEN-") + 6);
+
+                    if(checkToken(userToken, paquete.getAddress().getHostAddress(), )) {
+
+                        ArrayList<Pais> result = search(data);
+                        enviarPaises(result, paquete.getAddress(), paquete.getPort());º
+
+                    } else {
+
+                        System.out.println("Usuario con token incorrecto");
+
+                    }
 
                 }
 
@@ -74,6 +84,26 @@ public class Server {
 
         }
 
+    }
+
+    private static boolean checkToken(String userToken, String ip, String userLogin) {
+
+        boolean valid = false;
+        int userId = ServerDao.instance.getUserId(userLogin);
+
+        if(userId != -1 ) {
+
+            String serverUserToken = ServerDao.instance.getUserToken(ip, userLogin);
+
+            if(serverUserToken != null && serverUserToken.equals(userToken) ) {
+
+                valid = true;
+
+            }
+
+        }
+
+        return valid;
     }
 
     private static ArrayList<Pais> search(String data ) {
