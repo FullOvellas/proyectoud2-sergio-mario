@@ -1,8 +1,8 @@
 package com.sergiomario.countryapi.controller;
 
 import com.sergiomario.countryapi.Main;
-import com.sergiomario.countryapi.dao.CountryFetcher;
-import com.sergiomario.countryapi.model.country.Country;
+import com.sergiomario.countryapi.dao.ServerDao;
+import com.sergiomario.countryapi.model.country.Pais;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,6 +12,8 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
+
+import java.sql.SQLException;
 import java.util.Random;
 
 public class FlagGameController {
@@ -37,7 +39,7 @@ public class FlagGameController {
     public Label highScoreLbl;
 
     @FXML
-    public void initialize() {
+    public void initialize() throws SQLException {
         setCurrentCountries();
     }
 
@@ -56,7 +58,13 @@ public class FlagGameController {
 
             PauseTransition pause = new PauseTransition(Duration.seconds(1.0));
             pause.setOnFinished(event -> {
-                setCurrentCountries();
+                try {
+                    setCurrentCountries();
+                } catch (SQLException e) {
+
+                    System.out.println(e.getMessage());
+
+                }
             });
             pause.play();
 
@@ -80,12 +88,20 @@ public class FlagGameController {
                 if (response == ButtonType.YES) {
 
                     updateScore();
-                    setCurrentCountries();
+                    try {
+                        setCurrentCountries();
+                    } catch (SQLException e) {
+                        System.out.println(e.getMessage());
+                    }
 
                 } else {
 
                     updateScore();
-                    setCurrentCountries();
+                    try {
+                        setCurrentCountries();
+                    } catch (SQLException e) {
+                        System.out.println(e.getMessage());
+                    }
                     toMenu();
 
                 }
@@ -96,7 +112,7 @@ public class FlagGameController {
 
     }
 
-    public void setCurrentCountries() {
+    public void setCurrentCountries() throws SQLException {
 
         String defaultColor = "#b5b3b3";
 
@@ -106,27 +122,27 @@ public class FlagGameController {
         optBtn2.setStyle("-fx-background-color:" + defaultColor);
         optBtn3.setStyle("-fx-background-color:" + defaultColor);
 
-        Country[] countries = CountryFetcher.getRandomCountries(3);
+        Pais[] countries = ServerDao.instance.getRandomCountries(3);
 
         switch (correct) {
 
             case 0 -> {
                 correctButton = optBtn1;
-                flag.setImage(CountryFetcher.getFlag(countries[0].getName()));
+                flag.setImage(ServerDao.instance.getFlag(countries[0].getNombre()));
             }
             case 1 -> {
                 correctButton = optBtn2;
-                flag.setImage(CountryFetcher.getFlag(countries[1].getName()));
+                flag.setImage(ServerDao.instance.getFlag(countries[1].getNombre()));
             }
             case 2 -> {
                 correctButton = optBtn3;
-                flag.setImage(CountryFetcher.getFlag(countries[2].getName()));
+                flag.setImage(ServerDao.instance.getFlag(countries[2].getNombre()));
             }
         }
 
-        optBtn1.setText(countries[0].getName());
-        optBtn2.setText(countries[1].getName());
-        optBtn3.setText(countries[2].getName());
+        optBtn1.setText(countries[0].getNombre());
+        optBtn2.setText(countries[1].getNombre());
+        optBtn3.setText(countries[2].getNombre());
 
     }
 

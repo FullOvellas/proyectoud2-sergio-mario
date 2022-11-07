@@ -1,15 +1,13 @@
 package com.sergiomario.countryapi.controller;
 
 import com.sergiomario.countryapi.Main;
-import com.sergiomario.countryapi.dao.CountryFetcher;
-import com.sergiomario.countryapi.model.country.Country;
+import com.sergiomario.countryapi.dao.ServerDao;
 import com.sergiomario.countryapi.model.country.Pais;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 
@@ -79,7 +77,7 @@ public class SearchController implements Initializable {
 
             if(modoBusqueda == 0 ) {
 
-                lastResult = CountryFetcher.searchCountriesByName(rawBusqueda);
+                lastResult = ServerDao.instance.searchByName(rawBusqueda);
 
             } else if(modoBusqueda == 1 ) {
 
@@ -87,11 +85,11 @@ public class SearchController implements Initializable {
 
             } else if(modoBusqueda == 2){
 
-                lastResult = CountryFetcher.searchCountriesByCurrency(rawBusqueda);
+                lastResult = ServerDao.instance.searchByCurrency(rawBusqueda);
 
             } else {
 
-                lastResult = CountryFetcher.searchCountriesByCapital(rawBusqueda);
+                lastResult = ServerDao.instance.searchByCapital(rawBusqueda);
 
             }
 
@@ -201,8 +199,6 @@ public class SearchController implements Initializable {
         txtNombre.setText(c.getNombre());
         txtCapital.setText(c.getCapital());
 
-        // TODO: imgBandera.setImage(new Image(c.getFlags().getPng()));
-
         txtPoblacion.setText("%,d".formatted(c.getNumHabitantes()));
 
         StringBuilder strMonedas = new StringBuilder("");
@@ -221,7 +217,7 @@ public class SearchController implements Initializable {
 
         txtMonedas.setText(strMonedas.toString());
 
-        imgBandera.setImage(CountryFetcher.getFlag(c.getNombre()));
+        imgBandera.setImage(ServerDao.instance.getFlag(c.getNombre()));
 
         StringBuilder strIdiomas = new StringBuilder("");
 
