@@ -189,7 +189,7 @@ public class Server {
         rawCredentials = rawCredentials.substring(5);
         loginLength = Integer.parseInt(rawCredentials.substring(0, rawCredentials.indexOf("-")));
 
-        rawCredentials = rawCredentials.substring(2);
+        rawCredentials = rawCredentials.substring(rawCredentials.indexOf("-") + 1);
         login = rawCredentials.substring(0, loginLength);
 
         rawCredentials = rawCredentials.substring(loginLength);
@@ -205,16 +205,17 @@ public class Server {
 
         }
 
+        System.out.println(hashedCredentials);
+
         if(hashString(packetIp).equals(hashedIP)) {
 
-            String tempUser = "user";
-            String tempPassword = "1234";
+            String bbddCredentials = ServerDao.instance.getCredentials(login);
 
-            if(tempUser.equals(login) && hashString(tempPassword).equals(hashedCredentials)) {
+            if(bbddCredentials != null && bbddCredentials.equals(hashedCredentials)) {
 
                 userToken = generarToken(login);
 
-                System.out.println("Login: " + tempUser + " -- Token: " + userToken);
+                System.out.println("Login: " + login + " -- Token: " + userToken);
 
             }
 

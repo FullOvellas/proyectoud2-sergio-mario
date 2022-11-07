@@ -31,6 +31,34 @@ public class ServerDao {
 
     }
 
+    public String getCredentials(String login ) {
+
+        String credentials = null;
+
+        try {
+            // TODO: editar para que sea LIKE NOMBRE o similar
+            PreparedStatement ps = db.prepareStatement("SELECT PASSWD FROM USERS WHERE LOGIN = ?");
+            ResultSet rs;
+
+            ps.setString(1, login);
+
+            rs = ps.executeQuery();
+
+            while (rs.next() ) {
+
+                credentials = rs.getString(1);
+
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+        }
+
+        return credentials;
+    }
+
     public ArrayList<Pais> searchByName(String searchStr) {
 
         ArrayList<Pais> out = new ArrayList<>();
