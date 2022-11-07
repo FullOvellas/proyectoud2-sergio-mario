@@ -89,7 +89,7 @@ public class SearchController implements Initializable {
 
             } else {
 
-                lastResult = CountryFetcher.searchCountriesByCapital(rawBusqueda);
+                lastResult = ServerDao.instance.searchByCapital(rawBusqueda);
 
             }
 
