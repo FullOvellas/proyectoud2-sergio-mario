@@ -33,34 +33,20 @@ public class CountryFetcher {
 
     }
 
-    public static ArrayList<Country> searchCountriesByCapital(String searchStr ) {
-        ArrayList<Country> out;
+    public static ArrayList<Pais> searchCountriesByCapital(String searchStr ) {
+        ArrayList<Pais> out = new ArrayList<>();
 
-        if(hasConnection ) {
+        try {
 
-            out = genericSearch("capital", searchStr);
+            Cliente.instance.enviar("SEARCH-CAPITAL-" + searchStr.length() + "-" +  searchStr + "-" + Cliente.instance.getToken());
 
-        } else {
+            out = recibirPaises();
 
-            out = new ArrayList<>();
+        } catch (SocketException ex ) {
 
-            cachedCountries.forEach(country -> {
 
-                if(country.getCapital() != null ) {
-
-                    if(country.getCapital().matches(searchStr) || country.getCapital().contains(searchStr ) ) {
-
-                        out.add(country);
-
-                    }
-
-                }
-
-            });
 
         }
-
-        out.sort(Comparator.comparingInt(country -> -country.getPopulation()));
 
         return out;
     }

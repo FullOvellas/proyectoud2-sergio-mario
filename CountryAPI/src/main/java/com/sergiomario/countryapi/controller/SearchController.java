@@ -91,7 +91,7 @@ public class SearchController implements Initializable {
 
             } else {
 
-                // lastResult = CountryFetcher.searchCountriesByCapital(rawBusqueda);
+                lastResult = CountryFetcher.searchCountriesByCapital(rawBusqueda);
 
             }
 

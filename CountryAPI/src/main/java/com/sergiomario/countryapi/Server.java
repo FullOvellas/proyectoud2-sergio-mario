@@ -108,9 +108,22 @@ public class Server {
 
             String searchName = data.substring(0, searchLength);
 
-            System.out.println("Búsqueda por moneda:" + searchName+".");
+            System.out.println("Búsqueda por moneda:" + searchName);
 
             result = ServerDao.instance.searchByCurrency(searchName);
+
+        } else if(data.startsWith("CAPITAL") ) {
+
+            data = data.substring(7);
+
+            int searchLength = Integer.parseInt(data.substring(0, data.indexOf("-")));
+            data = data.substring(data.indexOf("-") + 1);
+
+            String searchName = data.substring(0, searchLength);
+
+            System.out.println("Búsqueda por capital:" + searchName);
+
+            result = ServerDao.instance.searchByCapital(searchName);
 
         }
 
