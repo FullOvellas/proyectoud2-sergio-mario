@@ -1,8 +1,8 @@
 package com.sergiomario.countryapi.controller;
 
 import com.sergiomario.countryapi.Main;
-import com.sergiomario.countryapi.dao.CountryFetcher;
-import com.sergiomario.countryapi.model.country.Country;
+import com.sergiomario.countryapi.dao.ServerDao;
+import com.sergiomario.countryapi.model.country.Pais;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -11,6 +11,8 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import java.sql.SQLException;
 
 public class PopulationGameController {
 
@@ -24,9 +26,9 @@ public class PopulationGameController {
     @FXML
     private ImageView flagLeft;
     @FXML
-    private Country countryLeft;
+    private Pais countryLeft;
     @FXML
-    private Country countryRight;
+    private Pais countryRight;
     @FXML
     private Label countryRightLbl;
     @FXML
@@ -40,21 +42,21 @@ public class PopulationGameController {
     private int score;
     private int highScore;
 
-    public void initialize() {
+    public void initialize() throws SQLException {
 
-        Country[] countries = CountryFetcher.getRandomCountries(2);
+        Pais[] countries = ServerDao.instance.getRandomCountries(2);
         countryLeft = countries[0];
         countryRight = countries[1];
 
-        correctButton = countries[0].getPopulation() > countries[1].getPopulation() ? lowerButton : higherButton;
+        correctButton = countries[0].getNumHabitantes() > countries[1].getNumHabitantes() ? lowerButton : higherButton;
 
-        flagLeft.setImage(CountryFetcher.getFlag(countryLeft.getName()));
-        flagRight.setImage(CountryFetcher.getFlag(countryRight.getName()));
+        flagLeft.setImage(ServerDao.instance.getFlag(countryLeft.getNombre()));
+        flagRight.setImage(ServerDao.instance.getFlag(countryRight.getNombre()));
 
-        countryLeftLbl.setText(countries[0].getName());
-        countryRightLbl.setText(countries[1].getName());
+        countryLeftLbl.setText(countries[0].getNombre());
+        countryRightLbl.setText(countries[1].getNombre());
 
-        populationLbl.setText("%,d".formatted(countries[0].getPopulation()));
+        populationLbl.setText("%,d".formatted(countries[0].getNumHabitantes()));
 
         scoreLbl.setText("Puntuación: 0");
         highScoreLbl.setText("Récord: 0");
@@ -67,7 +69,7 @@ public class PopulationGameController {
 
     }
 
-    public void checkAnswer(ActionEvent e) {
+    public void checkAnswer(ActionEvent e) throws SQLException {
 
         if (e.getSource().equals(correctButton)) {
 
@@ -90,12 +92,20 @@ public class PopulationGameController {
                 if (response == ButtonType.YES) {
 
                     updateScore();
-                    updateCountries();
+                    try {
+                        updateCountries();
+                    } catch (SQLException ex) {
+                        System.out.println(ex.getMessage());
+                    }
 
                 } else {
 
                     updateScore();
-                    updateCountries();
+                    try {
+                        updateCountries();
+                    } catch (SQLException ex) {
+                        System.out.println(ex.getMessage());
+                    }
                     toMenu();
 
                 }
@@ -119,25 +129,25 @@ public class PopulationGameController {
 
     }
 
-    private void updateCountries() {
+    private void updateCountries() throws SQLException {
 
         countryLeft = countryRight;
         countryLeftLbl.setText(countryRightLbl.getText());
         flagLeft.setImage(flagRight.getImage());
-        populationLbl.setText("%,d".formatted(countryLeft.getPopulation()));
+        populationLbl.setText("%,d".formatted(countryLeft.getNumHabitantes()));
 
-        countryRight = CountryFetcher.getRandomCountries(1)[0];
+        countryRight = ServerDao.instance.getRandomCountries(1)[0];
 
         while (countryLeft.equals(countryRight)) {
 
-            countryRight = CountryFetcher.getRandomCountries(1)[0];
+            countryRight = ServerDao.instance.getRandomCountries(1)[0];
 
         }
 
-        flagRight.setImage(CountryFetcher.getFlag(countryRight.getName()));
-        countryRightLbl.setText(countryRight.getName());
+        flagRight.setImage(ServerDao.instance.getFlag(countryRight.getNombre()));
+        countryRightLbl.setText(countryRight.getNombre());
 
-        correctButton = countryLeft.getPopulation() > countryRight.getPopulation() ? lowerButton : higherButton;
+        correctButton = countryLeft.getNumHabitantes() > countryRight.getNumHabitantes() ? lowerButton : higherButton;
 
     }
 

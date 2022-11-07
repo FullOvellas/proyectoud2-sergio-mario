@@ -7,37 +7,25 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.sergiomario.countryapi.model.country.Country;
-import com.sergiomario.countryapi.model.country.CurrenciesItem;
 import com.sergiomario.countryapi.model.country.LanguagesItem;
 
 import com.sergiomario.countryapi.model.country.Pais;
-import javafx.scene.image.Image;
 
 
-public class CountryFetcher {
-
-    private static ArrayList<Country> cachedCountries;
+public class ServerDao {
     private static boolean hasConnection;
     private static final String DB_URL = "jdbc:mysql://localhost:3306/BBDD_PAISES";
     private static final String USER = "root";
     private static final String PASSWORD = "root";
 
     private CountryFetcher() {}
-
-    public static void init() {
-
-        cachedCountries = new ArrayList<>();
-
-    }
 
     public static ArrayList<Country> searchCountriesByCapital(String searchStr ) throws SQLException {
 
@@ -283,12 +271,6 @@ public class CountryFetcher {
 
     }
 
-    public static Image getFlag(String name) {
 
-        String path = "file:res/img/%s.png";
-
-        return new Image(String.format(path, name));
-
-    }
 
 }

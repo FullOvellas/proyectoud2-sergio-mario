@@ -1,6 +1,8 @@
 package com.sergiomario.countryapi.dao;
 
+import com.sergiomario.countryapi.Server;
 import com.sergiomario.countryapi.model.country.Pais;
+import javafx.scene.image.Image;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -145,16 +147,32 @@ public class ServerDao {
         return out;
     }
 
-    public Pais[] randomCountries(int quantity) throws SQLException {
+    public Image getFlag(String name) {
+
+        String path = "file:res/img/%s.png";
+
+        return new Image(String.format(path, name));
+
+    }
+
+    public Pais[] getRandomCountries(int quantity) throws SQLException {
 
         Pais[] out = new Pais[quantity];
-        String sql1 = "SELECT * FROM PAISES";
-        String sql2 = "SELECT I.NOMBRE, M.NOMBRE FROM IDIOMAS AS I INNER JOIN ";
-        Statement search1 = db.createStatement();
-        PreparedStatement search2 = db.prepareStatement(sql2);
+        String sql = "SELECT NOMBRE, NUM_HABITANTES FROM PAISES ORDER BY RAND() LIMIT " + quantity;
+
+        Statement query = db.createStatement();
+
+        ResultSet rs = query.executeQuery(sql);
 
         int i = 0;
+        while(rs.next()) {
 
+            out[i] = new Pais(rs.getString(1), rs.getInt(2));
+            i++;
+
+        }
+
+        return out;
 
     }
 

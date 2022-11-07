@@ -23,6 +23,13 @@ public class Pais implements Serializable {
 
     }
 
+    public Pais(String nombre, int numHabitantes) {
+
+        this.nombre = nombre;
+        this.numHabitantes = numHabitantes;
+
+    }
+
     public String getNombre() {
         return nombre;
     }

@@ -2,15 +2,10 @@ package com.sergiomario.countryapi.controller;
 
 import com.sergiomario.countryapi.Main;
 import com.sergiomario.countryapi.dao.Cliente;
-import com.sergiomario.countryapi.dao.CountryFetcher;
-
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 
 import java.net.SocketException;
 
