@@ -66,7 +66,7 @@ public class Server {
 
                 }
 
-            } catch (IOException ex ) {
+            } catch (Exception ex ) {
 
                 System.out.println("Error al escuchar");
 
@@ -204,8 +204,6 @@ public class Server {
             packetIp = "127.0.1.1";
 
         }
-
-        System.out.println(hashedCredentials);
 
         if(hashString(packetIp).equals(hashedIP)) {
 
