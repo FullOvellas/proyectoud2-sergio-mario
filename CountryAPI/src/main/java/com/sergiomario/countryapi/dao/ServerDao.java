@@ -154,4 +154,7 @@ public class ServerDao {
         return out;
     }
 
+    public ArrayList<Pais> searchByCapital(String searchName) {
+        return null;
+    }
 }
