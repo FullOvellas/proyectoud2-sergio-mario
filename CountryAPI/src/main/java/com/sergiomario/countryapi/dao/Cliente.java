@@ -123,13 +123,22 @@ public class Cliente {
 
         String ipAddress = null;
 
-        try {
+        if(adr.getHostAddress().equals("127.0.0.1") ) {
 
-            InetAddress address = InetAddress.getLocalHost();
+            ipAddress = "127.0.1.1";
 
-            ipAddress = address.getHostAddress();
+        } else {
 
-        } catch (UnknownHostException ex) {
+            try( DatagramSocket socket = new DatagramSocket()){
+
+                socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+                ipAddress = socket.getLocalAddress().getHostAddress();
+
+            } catch (SocketException | UnknownHostException e) {
+
+
+
+            }
 
         }
 
