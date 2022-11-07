@@ -54,6 +54,7 @@ public class Server {
 
                 socket.receive(paquete);
                 String data = new String(paquete.getData(), paquete.getOffset(), paquete.getLength(), "UTF-8");
+                System.out.println(data);
 
                 if(data.startsWith("CRED-") ) {
 

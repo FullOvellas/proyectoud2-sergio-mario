@@ -5,7 +5,10 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,6 +27,9 @@ public class CountryFetcher {
 
     private static ArrayList<Country> cachedCountries;
     private static boolean hasConnection;
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/BBDD_PAISES";
+    private static final String USER = "root";
+    private static final String PASSWORD = "root";
 
     private CountryFetcher() {}
 
@@ -33,8 +39,16 @@ public class CountryFetcher {
 
     }
 
-    public static ArrayList<Country> searchCountriesByCapital(String searchStr ) {
+    public static ArrayList<Country> searchCountriesByCapital(String searchStr ) throws SQLException {
+
         ArrayList<Country> out;
+        // TODO
+
+        try (Connection con = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
+
+
+
+        }
 
         if(hasConnection ) {
 
