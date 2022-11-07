@@ -185,4 +185,79 @@ public class ServerDao {
     public ArrayList<Pais> searchByCapital(String searchName) {
         return null;
     }
+
+    public void registrarToken(String userToken, String ip, String userLogin) {
+
+        try {
+
+            PreparedStatement ps = db.prepareStatement("SELECT ID_SESION FROM TOKENS_USERS WHERE USER_IP = ? AND ID_USER = ?;");
+            ResultSet rs;
+
+            ps.setString(1, ip);
+            ps.setInt(2, getUserId(userLogin));
+
+            rs = ps.executeQuery();
+
+            if(rs.next() ) {
+
+                // Token de usuario-IP existente -> borrar y crear uno nuevo
+                PreparedStatement psToken = db.prepareStatement("UPDATE TOKENS_USERS SET TOKEN = ? WHERE ID_USER = ? AND USER_IP = ?");
+
+                psToken.setString(1, userToken);
+                psToken.setInt(2, getUserId(userLogin));
+                psToken.setString(3, ip);
+
+                psToken.execute();
+
+            } else {
+
+                // Token de usuario-IP existente -> borrar y crear uno nuevo
+                PreparedStatement psToken = db.prepareStatement("INSERT INTO TOKENS_USERS (ID_USER, USER_IP, TOKEN) VALUES (?, ?, ?)");
+
+                psToken.setInt(1, getUserId(userLogin));
+                psToken.setString(2, ip);
+                psToken.setString(3, userToken);
+
+                psToken.execute();
+
+            }
+
+        } catch (SQLException ex ) {
+
+            System.out.println("Error al registrar token");
+
+            ex.printStackTrace();
+
+        }
+
+    }
+
+    private int getUserId(String login) {
+
+        int userId = -1;
+
+        try {
+
+            PreparedStatement ps = db.prepareStatement("SELECT ID_USER FROM USERS WHERE LOGIN = ?");
+            ResultSet rs;
+
+            ps.setString(1, login);
+
+            rs = ps.executeQuery();
+
+            while (rs.next() ) {
+
+                userId = rs.getInt(1);
+
+            }
+
+        } catch (SQLException ex ) {
+
+
+
+        }
+
+        return userId;
+    }
+
 }

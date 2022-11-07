@@ -3,11 +3,7 @@ package com.sergiomario.countryapi;
 import com.sergiomario.countryapi.dao.ServerDao;
 import com.sergiomario.countryapi.model.country.Pais;
 
-<<<<<<< HEAD
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-=======
->>>>>>> 9af3a23 (Añadida la busqueda a operaciones posibles)
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.*;
@@ -17,6 +13,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Comparator;
 
 public class Server {
 
@@ -89,7 +86,6 @@ public class Server {
 
         if(data.startsWith("NAME") ) {
 
-<<<<<<< HEAD
             data = data.substring(5);
 
             int searchLength = Integer.parseInt(data.substring(0, data.indexOf("-")));
@@ -126,14 +122,10 @@ public class Server {
             System.out.println("Búsqueda por capital:" + searchName);
 
             result = ServerDao.instance.searchByCapital(searchName);
-=======
-
-
-            // Buscar por nombre
-            ArrayList<Pais> result = ServerDao.instance.searchByName("");
->>>>>>> 9af3a23 (Añadida la busqueda a operaciones posibles)
 
         }
+
+        result.sort(Comparator.comparingInt(Pais::getNumHabitantes));
 
         return result;
     }
@@ -208,9 +200,8 @@ public class Server {
 
         if(address.getHostAddress().equals("127.0.0.1") ) {
 
-            // Debido a que 127.0.1.1 es loopback de 127.0.0.1
+            // 127.0.1.1 es loopback de 127.0.0.1
 
-            // TODO: es un parche para funcionar en localhost
             packetIp = "127.0.1.1";
 
         }
@@ -223,12 +214,15 @@ public class Server {
 
                 userToken = generarToken(login);
 
+                ServerDao.instance.registrarToken(userToken, packetIp, login);
+
                 System.out.println("Login: " + login + " -- Token: " + userToken);
 
             }
 
         }
 
+        // Independientemente de si las credenciales son correctas o no se envía un mensaje
         enviar(userToken, address, userPort);
 
     }
