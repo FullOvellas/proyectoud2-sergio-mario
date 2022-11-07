@@ -125,8 +125,6 @@ public class Server {
 
         }
 
-        result.sort(Comparator.comparingInt(Pais::getNumHabitantes));
-
         return result;
     }
     private static void enviar(String data, InetAddress address, int userPort ) {
