@@ -102,26 +102,32 @@ public class Cliente {
      */
     public String enviarCredenciales(String user, String passwd) throws SocketException {
 
-        String ipAddress = getLocalIpAddress();
+
         String newToken = "ERROR";
 
-        if(ipAddress != null ) {
+        if( adr != null && socket != null ) {
 
-            String hashedCredentialData = hashString(passwd);
-            String hashedIPData = hashString(ipAddress);
+            String ipAddress = getLocalIpAddress();
 
-            // Para separar los hashes se tiene en cuenta que
-            // independientemente de la entrada, la longitud del
-            // string del hash es 128 caracteres
+            if(ipAddress != null ) {
+
+                String hashedCredentialData = hashString(passwd);
+                String hashedIPData = hashString(ipAddress);
+
+                // Para separar los hashes se tiene en cuenta que
+                // independientemente de la entrada, la longitud del
+                // string del hash es 128 caracteres
 
                 // "tipo mensaje" - longitud del login - login    -     hash contraseña    - hash IP
-            enviar( "CRED-" + user.length() + "-" + user + "" + hashedCredentialData + hashedIPData);
+                enviar("CRED-" + user.length() + "-" + user + "" + hashedCredentialData + hashedIPData);
 
-            newToken = recibir();
+                newToken = recibir();
 
-            if(newToken != null && !newToken.equals("ERROR") ) {
+                if (newToken != null && !newToken.equals("ERROR")) {
 
-                this.token = newToken;
+                    this.token = newToken;
+
+                }
 
             }
 

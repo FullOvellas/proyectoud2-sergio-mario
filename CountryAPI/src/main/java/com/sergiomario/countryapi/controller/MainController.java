@@ -14,6 +14,8 @@ import java.net.SocketException;
  */
 public class MainController {
 
+    private boolean ipConfigurada = false;
+
     @FXML
     TextField txtDireccion;
 
@@ -32,8 +34,9 @@ public class MainController {
         String ip = txtDireccion.getText();
         boolean encontrada = Cliente.instance.configurarConexion(ip);
 
-        if(encontrada ) {
+        if(encontrada) {
 
+            ipConfigurada = true;
             txtDireccion.setStyle("-fx-control-inner-background: #416d31");
 
         } else {
@@ -52,27 +55,36 @@ public class MainController {
     @FXML
     protected void onLoginClick() {
 
-        try {
+        if(ipConfigurada ) {
 
-            String token = Cliente.instance.enviarCredenciales(txtUsuario.getText(), txtPassword.getText());
+            try {
 
-            if(!token.equals("ERROR")) {
+                String token = Cliente.instance.enviarCredenciales(txtUsuario.getText(), txtPassword.getText());
 
-                // Volver a hacer invisible por si se vuelve a la pantalla de login
-                lblWrongPassword.setVisible(false);
+                if(!token.equals("ERROR")) {
 
-                Main.activate("menu");
+                    // Volver a hacer invisible por si se vuelve a la pantalla de login
+                    lblWrongPassword.setVisible(false);
 
-            } else {
+                    Main.activate("menu");
 
-                lblWrongPassword.setText("Usuario o contraseña incorrectos");
+                } else {
+
+                    lblWrongPassword.setText("Usuario o contraseña incorrectos");
+                    lblWrongPassword.setVisible(true);
+
+                }
+
+            } catch (SocketException ex ) {
+
+                lblWrongPassword.setText("No se pudo conectar con el servidor");
                 lblWrongPassword.setVisible(true);
 
             }
 
-        } catch (SocketException ex ) {
+        } else {
 
-            lblWrongPassword.setText("No se pudo conectar con el servidor");
+            lblWrongPassword.setText("Introduce la IP del server");
             lblWrongPassword.setVisible(true);
 
         }
