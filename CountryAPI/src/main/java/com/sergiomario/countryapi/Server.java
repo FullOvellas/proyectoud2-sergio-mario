@@ -3,7 +3,6 @@ package com.sergiomario.countryapi;
 import com.sergiomario.countryapi.dao.ServerDao;
 import com.sergiomario.countryapi.model.country.Pais;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -12,8 +11,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Comparator;
 
 public class Server {
 
@@ -56,20 +57,34 @@ public class Server {
                 String data = new String(paquete.getData(), paquete.getOffset(), paquete.getLength(), "UTF-8");
                 System.out.println(data);
 
-                if(data.startsWith("CRED-") ) {
+                if(data.startsWith("PING")) {
+
+                    System.out.println("PING de " + paquete.getAddress());
+
+                    enviar("PING", paquete.getAddress(), paquete.getPort());
+
+                } else if(data.startsWith("CRED-") ) {
 
                     loginUser(data, paquete.getAddress(), paquete.getPort());
 
                 } else if(data.startsWith("SEARCH-") ) {
 
-                    ArrayList<Pais> result = search(data);
-                    enviarPaises(result, paquete.getAddress(), paquete.getPort());
+                    String userToken = data.substring(data.indexOf("TOKEN-") + 6);
 
-                    System.out.println("Hehco");
+                    if(checkToken(userToken, paquete.getAddress().getHostAddress())) {
+
+                        ArrayList<Pais> result = search(data);
+                        enviarPaises(result, paquete.getAddress(), paquete.getPort());
+
+                    } else {
+
+                        System.out.println("Usuario con token incorrecto");
+
+                    }
 
                 }
 
-            } catch (IOException ex ) {
+            } catch (Exception ex ) {
 
                 System.out.println("Error al escuchar");
 
@@ -77,6 +92,19 @@ public class Server {
 
         }
 
+    }
+
+    private static boolean checkToken(String userToken, String ip) {
+
+        if(ip.equals("127.0.0.1") ) {
+
+            ip = "127.0.1.1";
+
+        }
+
+        ArrayList<String> tokens = ServerDao.instance.getIpTokens(ip);
+
+        return tokens.contains(userToken);
     }
 
     private static ArrayList<Pais> search(String data ) {
@@ -192,7 +220,7 @@ public class Server {
         rawCredentials = rawCredentials.substring(5);
         loginLength = Integer.parseInt(rawCredentials.substring(0, rawCredentials.indexOf("-")));
 
-        rawCredentials = rawCredentials.substring(2);
+        rawCredentials = rawCredentials.substring(rawCredentials.indexOf("-") + 1);
         login = rawCredentials.substring(0, loginLength);
 
         rawCredentials = rawCredentials.substring(loginLength);
@@ -201,28 +229,29 @@ public class Server {
 
         if(address.getHostAddress().equals("127.0.0.1") ) {
 
-            // Debido a que 127.0.1.1 es loopback de 127.0.0.1
+            // 127.0.1.1 es loopback de 127.0.0.1
 
-            // TODO: es un parche para funcionar en localhost
             packetIp = "127.0.1.1";
 
         }
 
         if(hashString(packetIp).equals(hashedIP)) {
 
-            String tempUser = "user";
-            String tempPassword = "1234";
+            String bbddCredentials = ServerDao.instance.getCredentials(login);
 
-            if(tempUser.equals(login) && hashString(tempPassword).equals(hashedCredentials)) {
+            if(bbddCredentials != null && bbddCredentials.equals(hashedCredentials)) {
 
                 userToken = generarToken(login);
 
-                System.out.println("Login: " + tempUser + " -- Token: " + userToken);
+                ServerDao.instance.registrarToken(userToken, packetIp, login);
+
+                System.out.println("Login: " + login + " -- Token: " + userToken);
 
             }
 
         }
 
+        // Independientemente de si las credenciales son correctas o no se envía un mensaje
         enviar(userToken, address, userPort);
 
     }
