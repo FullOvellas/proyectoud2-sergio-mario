@@ -56,7 +56,13 @@ public class Server {
                 socket.receive(paquete);
                 String data = new String(paquete.getData(), paquete.getOffset(), paquete.getLength(), "UTF-8");
 
-                if(data.startsWith("CRED-") ) {
+                if(data.startsWith("PING")) {
+
+                    System.out.println("PING de " + paquete.getAddress());
+
+                    enviar("PING", paquete.getAddress(), paquete.getPort());
+
+                } else if(data.startsWith("CRED-") ) {
 
                     loginUser(data, paquete.getAddress(), paquete.getPort());
 

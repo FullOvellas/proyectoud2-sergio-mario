@@ -33,7 +33,7 @@ public class Cliente {
 
     public boolean configurarConexion(String ip) {
 
-        boolean out = true;
+        boolean out;
 
         try {
 
@@ -41,9 +41,35 @@ public class Cliente {
             socket.setSoTimeout(3000);
             adr = InetAddress.getByName(ip);
 
+            out = enviarPing(ip);
+
         } catch (UnknownHostException | SocketException e) {
 
             out = false;
+
+        }
+
+        return out;
+    }
+
+    public boolean enviarPing(String ip ) {
+
+        boolean out = false;
+
+        try {
+
+            enviar("PING");
+            String r = recibir();
+
+            if(r != null && !r.equals("ERROR") ) {
+
+                out = true;
+
+            }
+
+        } catch (SocketException e) {
+
+
 
         }
 
