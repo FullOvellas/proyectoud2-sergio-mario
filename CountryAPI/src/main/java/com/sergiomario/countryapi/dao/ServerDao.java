@@ -36,7 +36,7 @@ public class ServerDao {
         String credentials = null;
 
         try {
-            // TODO: editar para que sea LIKE NOMBRE o similar
+
             PreparedStatement ps = db.prepareStatement("SELECT PASSWD FROM USERS WHERE LOGIN = ?");
             ResultSet rs;
 
@@ -59,35 +59,45 @@ public class ServerDao {
         return credentials;
     }
 
+    private ArrayList<Pais> parseCountries(ResultSet rs) throws SQLException {
+
+        ArrayList<Pais> out = new ArrayList<>();
+
+        while (rs.next()) {
+
+            int idPais = rs.getInt(1);
+            String nombre = rs.getString(2);
+            int habitantes = rs.getInt(3);
+            String capital = rs.getString(4);
+            ArrayList<String> idiomas = searchIdiomasById(idPais);
+            ArrayList<String> monedas = searchMonedasById(idPais);
+
+            Pais p = new Pais(nombre, capital, habitantes, idiomas, monedas);
+
+            out.add(p);
+
+        }
+
+        return out;
+
+    }
+
     public ArrayList<Pais> searchByName(String searchStr) {
 
         ArrayList<Pais> out = new ArrayList<>();
 
         try {
-                                                    // TODO: editar para que sea LIKE NOMBRE o similar
-            PreparedStatement ps = db.prepareStatement("SELECT ID_PAIS,NOMBRE,NUM_HABITANTES,CAPITAL  FROM PAISES WHERE NOMBRE = ?");
-            ResultSet rs;
+
+            PreparedStatement ps = db.prepareStatement("SELECT ID_PAIS,NOMBRE,NUM_HABITANTES,CAPITAL FROM PAISES WHERE NOMBRE LIKE ?");
+
+            searchStr = "%" + searchStr + "%";
 
             ps.setString(1, searchStr);
-
-            rs = ps.executeQuery();
-
-            while (rs.next() ) {
-
-                int idPais = rs.getInt(1);
-                String nombre = rs.getString(2);
-                int habitantes = rs.getInt(3);
-                String capital = rs.getString(4);
-                ArrayList<String> idiomas = searchIdiomasById(idPais);
-                ArrayList<String> monedas = searchMonedasById(idPais);
-
-                Pais p = new Pais(nombre,capital,habitantes,idiomas, monedas);
-
-                out.add(p);
-
-            }
+            out = parseCountries(ps.executeQuery());
 
         } catch (SQLException e) {
+
+            e.printStackTrace();
 
         }
 
@@ -99,32 +109,57 @@ public class ServerDao {
         ArrayList<Pais> out = new ArrayList<>();
 
         try {
-            // TODO: editar para que sea LIKE NOMBRE o similar
-            PreparedStatement ps = db.prepareStatement("SELECT ID_PAIS,P.NOMBRE,NUM_HABITANTES,CAPITAL FROM PAISES AS P INNER JOIN MONEDAS_PAISES AS MP ON P.ID_PAIS = MP.PAIS INNER JOIN MONEDAS AS M ON MP.MONEDA = M.ID_MONEDA AND M.NOMBRE = ?");
-            ResultSet rs;
+
+            PreparedStatement ps = db.prepareStatement("SELECT ID_PAIS,P.NOMBRE,NUM_HABITANTES,CAPITAL FROM PAISES AS P INNER JOIN MONEDAS_PAISES AS MP ON P.ID_PAIS = MP.PAIS INNER JOIN MONEDAS AS M ON MP.MONEDA = M.ID_MONEDA AND M.NOMBRE LIKE ?");
+
+            searchStr = "%" + searchStr + "%";
 
             ps.setString(1, searchStr);
-
-            rs = ps.executeQuery();
-
-            while (rs.next() ) {
-
-                int idPais = rs.getInt(1);
-                String nombre = rs.getString(2);
-                int habitantes = rs.getInt(3);
-                String capital = rs.getString(4);
-                ArrayList<String> idiomas = searchIdiomasById(idPais);
-                ArrayList<String> monedas = searchMonedasById(idPais);
-
-                Pais p = new Pais(nombre,capital,habitantes,idiomas, monedas);
-
-                out.add(p);
-
-            }
+            out = parseCountries(ps.executeQuery());
 
         } catch (SQLException e) {
 
             e.printStackTrace();
+
+        }
+
+        return out;
+    }
+
+    public ArrayList<Pais> searchByCapital(String searchStr) {
+        ArrayList<Pais> out = new ArrayList<>();
+
+        try {
+
+            PreparedStatement ps = db.prepareStatement("SELECT ID_PAIS,NOMBRE,NUM_HABITANTES,CAPITAL FROM PAISES WHERE CAPITAL LIKE ?");
+
+            searchStr = "%" + searchStr + "%";
+
+            ps.setString(1, searchStr);
+            out = parseCountries(ps.executeQuery());
+
+        } catch (SQLException e) {
+
+        }
+
+        return out;
+    }
+
+    public ArrayList<Pais> searchByLanguage(String searchStr ) {
+        ArrayList<Pais> out = new ArrayList<>();
+
+
+        //TODO: acabar
+        try {
+
+            PreparedStatement ps = db.prepareStatement("SELECT ID_PAIS,NOMBRE,NUM_HABITANTES,CAPITAL  FROM PAISES WHERE CAPITAL LIKE ?");
+
+            searchStr = "%" + searchStr + "%";
+
+            ps.setString(1, searchStr);
+            out = parseCountries(ps.executeQuery());
+
+        } catch (SQLException e) {
 
         }
 
@@ -182,8 +217,24 @@ public class ServerDao {
         return out;
     }
 
-    public ArrayList<Pais> searchByCapital(String searchName) {
-        return null;
+    public ArrayList<Pais> getRandomCountries(int quantity) {
+        ArrayList<Pais> out = new ArrayList<>();
+
+        try {
+
+            PreparedStatement ps = db.prepareStatement("SELECT ID_PAIS,NOMBRE,NUM_HABITANTES,CAPITAL FROM PAISES ORDER BY RAND() LIMIT ?");
+
+            ps.setInt(1, quantity);
+
+            out = parseCountries(ps.executeQuery());
+
+        } catch (SQLException ex ) {
+
+
+
+        }
+
+        return out;
     }
 
     public void registrarToken(String userToken, String ip, String userLogin) {

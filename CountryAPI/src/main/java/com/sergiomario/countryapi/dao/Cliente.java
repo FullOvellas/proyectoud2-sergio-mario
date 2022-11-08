@@ -107,12 +107,8 @@ public class Cliente {
 
         if(ipAddress != null ) {
 
-            System.out.println(ipAddress);
-
             String hashedCredentialData = hashString(passwd);
             String hashedIPData = hashString(ipAddress);
-
-            System.out.println(hashedCredentialData);
 
             // Para separar los hashes se tiene en cuenta que
             // independientemente de la entrada, la longitud del

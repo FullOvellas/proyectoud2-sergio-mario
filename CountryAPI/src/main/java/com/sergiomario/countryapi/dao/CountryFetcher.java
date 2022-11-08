@@ -3,18 +3,9 @@ package com.sergiomario.countryapi.dao;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.sergiomario.countryapi.model.country.Country;
-import com.sergiomario.countryapi.model.country.CurrenciesItem;
-import com.sergiomario.countryapi.model.country.LanguagesItem;
 
 import com.sergiomario.countryapi.model.country.Pais;
 import javafx.scene.image.Image;
@@ -22,16 +13,7 @@ import javafx.scene.image.Image;
 
 public class CountryFetcher {
 
-    private static ArrayList<Country> cachedCountries;
-    private static boolean hasConnection;
-
     private CountryFetcher() {}
-
-    public static void init() {
-
-        cachedCountries = new ArrayList<>();
-
-    }
 
     public static ArrayList<Pais> searchCountriesByCapital(String searchStr ) {
         ArrayList<Pais> out = new ArrayList<>();
@@ -126,130 +108,40 @@ public class CountryFetcher {
         return out;
     }
 
-    public static ArrayList<Country> searchCountriesByLanguage(String searchStr ) {
-
-        ArrayList<Country> out;
-
-        if(hasConnection ) {
-
-            out = genericSearch("lang", searchStr);
-
-        } else {
-
-            out = new ArrayList<>();
-
-            cachedCountries.forEach(country -> {
-
-                boolean hasLanguage = false;
-
-                for(LanguagesItem lang : country.getLanguages() ) {
-
-                    if(lang.getIso6391() != null && lang.getIso6391().toLowerCase().matches(searchStr.toLowerCase()) ) {
-
-                        hasLanguage = true;
-
-                    } else if(lang.getName() != null && lang.getName().toLowerCase().matches(searchStr.toLowerCase()) ) {
-
-                        hasLanguage = true;
-
-                    }
-
-                }
-
-                if(hasLanguage ) {
-
-                    out.add(country);
-
-                }
-
-            });
-
-        }
-
-        out.sort(Comparator.comparingInt(country -> -country.getPopulation()));
-
-        return out;
-    }
-
-    private static ArrayList<Country> genericSearch(String urlString, String search ) {
-
-        ArrayList<Country> out = new ArrayList<>();
-        ObjectMapper objectMapper = new ObjectMapper();
-
+    public static ArrayList<Pais> searchCountriesByLanguage(String searchStr ) {
+        ArrayList<Pais> out = new ArrayList<>();
 
         try {
 
-            URI url = new URI("https", "//restcountries.com/v2/"+ urlString + "/" + search, null);
+            Cliente.instance.enviar("SEARCH-LANG-" + searchStr.length() + "-" +  searchStr + "-TOKEN-" + Cliente.instance.getToken());
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(url.toURL().openStream()));
+            out = recibirPaises();
 
-            String json = br.readLine();
-            out = objectMapper.readValue(json, new TypeReference<>() {});
+        } catch (SocketException ex ) {
 
-        } catch (URISyntaxException | IOException e) {
 
-            System.out.println("No se encontró la URL");
-
-        }
-
-        return out;
-
-    }
-
-    private static ArrayList<Country> loadFromFile(Path file) {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        ArrayList<Country> out = new ArrayList<>();
-
-        try {
-
-            BufferedReader br = new BufferedReader(new FileReader(file.toFile()));
-
-            String json = br.readLine();
-
-            out = objectMapper.readValue(json, new TypeReference<>() {});
-
-        } catch (IOException e) {
 
         }
 
         return out;
     }
 
-    public static Country[] getRandomCountries(int countryNum) {
+    public static Pais[] getRandomCountries(int quantity) {
 
-        Country[] countries = new Country[countryNum];
-        ArrayList<Country> countrShuffle;
-        String json = "";
-        ObjectMapper om = new ObjectMapper();
-
-        try (BufferedReader br = Files.newBufferedReader(Path.of("res/CountryCache.json"))) {
-
-            json = br.readLine();
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-        }
+        Pais[] out = new Pais[0];
 
         try {
-            countrShuffle = om.readValue(json, new TypeReference<>() {});
-            Collections.shuffle(countrShuffle);
 
-            for (int i = 0; i < countryNum; i++) {
+            Cliente.instance.enviar("RAND-" + quantity + "-TOKEN-" + Cliente.instance.getToken());
 
-                countries[i] = countrShuffle.get(i);
+            out = recibirPaises().toArray(Pais[]::new);
 
-            }
-
-        } catch (JsonProcessingException e) {
-
-            throw new RuntimeException(e);
+        } catch (SocketException ex ) {
 
         }
 
-        return countries;
+
+        return out;
 
     }
 

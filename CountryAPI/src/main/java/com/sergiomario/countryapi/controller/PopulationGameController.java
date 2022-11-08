@@ -1,6 +1,7 @@
 package com.sergiomario.countryapi.controller;
 
 import com.sergiomario.countryapi.Main;
+import com.sergiomario.countryapi.dao.CountryFetcher;
 import com.sergiomario.countryapi.dao.ServerDao;
 import com.sergiomario.countryapi.model.country.Pais;
 import javafx.event.ActionEvent;
@@ -42,16 +43,16 @@ public class PopulationGameController {
     private int score;
     private int highScore;
 
-    public void initialize() throws SQLException {
+    public void initialize() {
 
-        Pais[] countries = ServerDao.instance.getRandomCountries(2);
+        Pais[] countries = CountryFetcher.getRandomCountries(2);
         countryLeft = countries[0];
         countryRight = countries[1];
 
         correctButton = countries[0].getNumHabitantes() > countries[1].getNumHabitantes() ? lowerButton : higherButton;
 
-        flagLeft.setImage(ServerDao.instance.getFlag(countryLeft.getNombre()));
-        flagRight.setImage(ServerDao.instance.getFlag(countryRight.getNombre()));
+        flagLeft.setImage(CountryFetcher.getFlag(countryLeft.getNombre()));
+        flagRight.setImage(CountryFetcher.getFlag(countryRight.getNombre()));
 
         countryLeftLbl.setText(countries[0].getNombre());
         countryRightLbl.setText(countries[1].getNombre());
@@ -136,15 +137,15 @@ public class PopulationGameController {
         flagLeft.setImage(flagRight.getImage());
         populationLbl.setText("%,d".formatted(countryLeft.getNumHabitantes()));
 
-        countryRight = ServerDao.instance.getRandomCountries(1)[0];
+        countryRight = CountryFetcher.getRandomCountries(1)[0];
 
         while (countryLeft.equals(countryRight)) {
 
-            countryRight = ServerDao.instance.getRandomCountries(1)[0];
+            countryRight = CountryFetcher.getRandomCountries(1)[0];
 
         }
 
-        flagRight.setImage(ServerDao.instance.getFlag(countryRight.getNombre()));
+        flagRight.setImage(CountryFetcher.getFlag(countryRight.getNombre()));
         countryRightLbl.setText(countryRight.getNombre());
 
         correctButton = countryLeft.getNumHabitantes() > countryRight.getNumHabitantes() ? lowerButton : higherButton;

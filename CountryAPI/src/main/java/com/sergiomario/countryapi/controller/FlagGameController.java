@@ -1,6 +1,7 @@
 package com.sergiomario.countryapi.controller;
 
 import com.sergiomario.countryapi.Main;
+import com.sergiomario.countryapi.dao.CountryFetcher;
 import com.sergiomario.countryapi.dao.ServerDao;
 import com.sergiomario.countryapi.model.country.Pais;
 import javafx.animation.PauseTransition;
@@ -39,7 +40,7 @@ public class FlagGameController {
     public Label highScoreLbl;
 
     @FXML
-    public void initialize() throws SQLException {
+    public void initialize(){
         setCurrentCountries();
     }
 
@@ -58,13 +59,7 @@ public class FlagGameController {
 
             PauseTransition pause = new PauseTransition(Duration.seconds(1.0));
             pause.setOnFinished(event -> {
-                try {
-                    setCurrentCountries();
-                } catch (SQLException e) {
-
-                    System.out.println(e.getMessage());
-
-                }
+                setCurrentCountries();
             });
             pause.play();
 
@@ -88,20 +83,13 @@ public class FlagGameController {
                 if (response == ButtonType.YES) {
 
                     updateScore();
-                    try {
-                        setCurrentCountries();
-                    } catch (SQLException e) {
-                        System.out.println(e.getMessage());
-                    }
+                    setCurrentCountries();
 
                 } else {
 
                     updateScore();
-                    try {
-                        setCurrentCountries();
-                    } catch (SQLException e) {
-                        System.out.println(e.getMessage());
-                    }
+                    setCurrentCountries();
+
                     toMenu();
 
                 }
@@ -112,7 +100,7 @@ public class FlagGameController {
 
     }
 
-    public void setCurrentCountries() throws SQLException {
+    public void setCurrentCountries() {
 
         String defaultColor = "#b5b3b3";
 
@@ -122,21 +110,21 @@ public class FlagGameController {
         optBtn2.setStyle("-fx-background-color:" + defaultColor);
         optBtn3.setStyle("-fx-background-color:" + defaultColor);
 
-        Pais[] countries = ServerDao.instance.getRandomCountries(3);
+        Pais[] countries = CountryFetcher.getRandomCountries(3);
 
         switch (correct) {
 
             case 0 -> {
                 correctButton = optBtn1;
-                flag.setImage(ServerDao.instance.getFlag(countries[0].getNombre()));
+                flag.setImage(CountryFetcher.getFlag(countries[0].getNombre()));
             }
             case 1 -> {
                 correctButton = optBtn2;
-                flag.setImage(ServerDao.instance.getFlag(countries[1].getNombre()));
+                flag.setImage(CountryFetcher.getFlag(countries[1].getNombre()));
             }
             case 2 -> {
                 correctButton = optBtn3;
-                flag.setImage(ServerDao.instance.getFlag(countries[2].getNombre()));
+                flag.setImage(CountryFetcher.getFlag(countries[2].getNombre()));
             }
         }
 

@@ -55,7 +55,6 @@ public class Server {
 
                 socket.receive(paquete);
                 String data = new String(paquete.getData(), paquete.getOffset(), paquete.getLength(), "UTF-8");
-                System.out.println(data);
 
                 if(data.startsWith("PING")) {
 
@@ -82,11 +81,33 @@ public class Server {
 
                     }
 
+                } else if(data.startsWith("RAND") ) {
+
+                    String userToken = data.substring(data.indexOf("TOKEN-") + 6);
+
+                    if(checkToken(userToken, paquete.getAddress().getHostAddress())) {
+
+                        String rawString = data.substring(data.indexOf("-") + 1);
+
+                        rawString = rawString.substring(0, rawString.indexOf("-"));
+
+                        int quantity = Integer.parseInt(rawString);
+
+                        System.out.println("Paises aleatorios a " + paquete.getAddress().getHostAddress());
+                        enviarPaises(ServerDao.instance.getRandomCountries(quantity), paquete.getAddress(), paquete.getPort());
+
+                    } else {
+
+                        System.out.println("Usuario con token incorrecto");
+
+                    }
+
                 }
 
             } catch (Exception ex ) {
 
                 System.out.println("Error al escuchar");
+                ex.printStackTrace();
 
             }
 
@@ -117,7 +138,7 @@ public class Server {
 
         if(data.startsWith("NAME") ) {
 
-            data = data.substring(5);
+            data = data.substring("NAME-".length());
 
             int searchLength = Integer.parseInt(data.substring(0, data.indexOf("-")));
             data = data.substring(data.indexOf("-") + 1);
@@ -130,7 +151,7 @@ public class Server {
 
         } else if(data.startsWith("CURRENCY") ) {
 
-            data = data.substring(9);
+            data = data.substring("CURRENCY-".length());
 
             int searchLength = Integer.parseInt(data.substring(0, data.indexOf("-")));
             data = data.substring(data.indexOf("-") + 1);
@@ -143,7 +164,7 @@ public class Server {
 
         } else if(data.startsWith("CAPITAL") ) {
 
-            data = data.substring(7);
+            data = data.substring("CAPITAL-".length());
 
             int searchLength = Integer.parseInt(data.substring(0, data.indexOf("-")));
             data = data.substring(data.indexOf("-") + 1);
@@ -153,6 +174,19 @@ public class Server {
             System.out.println("Búsqueda por capital:" + searchName);
 
             result = ServerDao.instance.searchByCapital(searchName);
+
+        } else if (data.startsWith("LANG") ) {
+
+            data = data.substring("LANG-".length());
+
+            int searchLength = Integer.parseInt(data.substring(0, data.indexOf("-")));
+            data = data.substring(data.indexOf("-") + 1);
+
+            String searchName = data.substring(0, searchLength);
+
+            System.out.println("Búsqueda por idioma:" + searchName);
+
+            result = ServerDao.instance.searchByLanguage(searchName);
 
         }
 

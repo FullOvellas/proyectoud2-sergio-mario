@@ -11,8 +11,6 @@ import java.util.Objects;
 
 public class Main extends Application {
 
-
-    private static HashMap<String, Pane> screenMap = new HashMap<>();
     private static Scene main;
 
     /**
@@ -20,8 +18,32 @@ public class Main extends Application {
      * @param name el nombre de la pantalla disponible
      */
     public static void activate(String name){
-    
-       main.setRoot( screenMap.get(name) );
+
+        try {
+
+            switch (name ) {
+                case "main":
+                    main.setRoot(FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("main-view.fxml"))));
+                    break;
+                case "menu":
+                    main.setRoot(FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("menu-view.fxml"))));
+                    break;
+                case "flags":
+                    main.setRoot(FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("flagGame-view.fxml"))));
+                    break;
+                case "populations":
+                    main.setRoot(FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("populationGame-view.fxml"))));
+                    break;
+                case "search":
+                    main.setRoot(FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("search-view.fxml"))));
+                    break;
+            }
+
+        } catch (IOException ex ) {
+
+            System.out.println("ERROR");
+
+        }
    
     }
 
@@ -30,30 +52,6 @@ public class Main extends Application {
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("main-view.fxml"));
         main = new Scene(fxmlLoader.load());
-
-        try {
-
-            // Añadir pantalla de búsqueda a las pantallas disponibles
-            screenMap.put("search", FXMLLoader.load(Objects.requireNonNull(getClass().getResource("search-view.fxml"), "No se pudo cargar la vista de búsqueda")));
-
-            // Pantalla de main
-            screenMap.put("main", FXMLLoader.load(Objects.requireNonNull(getClass().getResource("main-view.fxml"), "No se pudo cargar la vista main")));
-
-            // Pantalla de menú
-            screenMap.put("menu", FXMLLoader.load(Objects.requireNonNull(getClass().getResource("menu-view.fxml"), "No se pudo cargar la vista del menú")));
-
-            // Pantalla de xogo bandeiras
-            screenMap.put("flags", FXMLLoader.load(Objects.requireNonNull(getClass().getResource("flagGame-view.fxml"), "No se pudo cargar la vista del juego de banderas")));
-
-            // Pantalla de xogo poboacións
-            screenMap.put("populations", FXMLLoader.load(Objects.requireNonNull(getClass().getResource("populationGame-view.fxml"), "No se pudo cargar la vista del juego de poblaciones")));
-
-        } catch (IOException ex ) {
-
-
-            ex.printStackTrace();
-
-        }
 
         stage.setTitle("Country BBDD");
         stage.setScene(main);

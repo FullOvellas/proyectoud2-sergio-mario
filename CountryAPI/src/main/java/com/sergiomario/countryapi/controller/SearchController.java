@@ -1,6 +1,8 @@
 package com.sergiomario.countryapi.controller;
 
 import com.sergiomario.countryapi.Main;
+import com.sergiomario.countryapi.dao.Cliente;
+import com.sergiomario.countryapi.dao.CountryFetcher;
 import com.sergiomario.countryapi.dao.ServerDao;
 import com.sergiomario.countryapi.model.country.Pais;
 import javafx.collections.FXCollections;
@@ -77,19 +79,19 @@ public class SearchController implements Initializable {
 
             if(modoBusqueda == 0 ) {
 
-                lastResult = ServerDao.instance.searchByName(rawBusqueda);
+                lastResult = CountryFetcher.searchCountriesByName(rawBusqueda);
 
             } else if(modoBusqueda == 1 ) {
 
-                // lastResult = CountryFetcher.searchCountriesByLanguage(rawBusqueda);
+                lastResult = CountryFetcher.searchCountriesByLanguage(rawBusqueda);
 
             } else if(modoBusqueda == 2){
 
-                lastResult = ServerDao.instance.searchByCurrency(rawBusqueda);
+                lastResult = CountryFetcher.searchCountriesByCurrency(rawBusqueda);
 
             } else {
 
-                lastResult = ServerDao.instance.searchByCapital(rawBusqueda);
+                lastResult = CountryFetcher.searchCountriesByCapital(rawBusqueda);
 
             }
 
@@ -217,7 +219,7 @@ public class SearchController implements Initializable {
 
         txtMonedas.setText(strMonedas.toString());
 
-        imgBandera.setImage(ServerDao.instance.getFlag(c.getNombre()));
+        imgBandera.setImage(CountryFetcher.getFlag(c.getNombre()));
 
         StringBuilder strIdiomas = new StringBuilder("");
 

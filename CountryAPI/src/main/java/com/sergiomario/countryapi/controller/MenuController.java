@@ -2,6 +2,7 @@ package com.sergiomario.countryapi.controller;
 
 import com.sergiomario.countryapi.Main;
 import javafx.fxml.FXML;
+import javafx.scene.layout.Pane;
 
 /**
  * Controlador de la vista del menú
