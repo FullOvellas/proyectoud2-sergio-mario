@@ -6,12 +6,15 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Clase para gestionar la conexión con el servidor y para enviar y recibir datos del servidor
+ */
 public class Cliente {
 
     public static Cliente instance;
     public static final int SERVER_PORT = 8090;
 
-    private InetAddress adr; // server
+    private InetAddress adr;
     private DatagramSocket socket;
     private String token;
 
@@ -27,10 +30,19 @@ public class Cliente {
 
     }
 
+    /**
+     * Getter del token de sesión
+     * @return string del token
+     */
     public String getToken() {
         return token;
     }
 
+    /**
+     * A partir de una IP intentará conectarse con el servidor
+     * @param ip la IP del servidor
+     * @return true si se puede realizar la conexión
+     */
     public boolean configurarConexion(String ip) {
 
         boolean out;
@@ -52,6 +64,11 @@ public class Cliente {
         return out;
     }
 
+    /**
+     * Envía un ping a una IP para comprobar si es un servidor
+     * @param ip la IP para comprobar
+     * @return true si el ping volvio
+     */
     public boolean enviarPing(String ip ) {
 
         boolean out = false;
@@ -117,6 +134,11 @@ public class Cliente {
         return newToken;
     }
 
+    /**
+     * Obtiene un hash de una cadena
+     * @param rawData la cadena para hacer el hash
+     * @return el hash de la cadena
+     */
     public String hashString(String rawData ) {
 
         String out = null;
@@ -147,6 +169,10 @@ public class Cliente {
         return out;
     }
 
+    /**
+     * Obtiene la IP conectada a internet de la máquina del cliente
+     * @return null si no se puede encontrar la IP o una cadena con la IP
+     */
     private String getLocalIpAddress() {
 
         String ipAddress = null;
@@ -173,6 +199,11 @@ public class Cliente {
         return ipAddress;
     }
 
+    /**
+     * Envía una cadena al servidor configurado
+     * @param datos los datos a enviar
+     * @throws SocketException si no se pudieron enviar los datos
+     */
     public void enviar(String datos ) throws SocketException {
 
         byte[] buffer = datos.getBytes();
