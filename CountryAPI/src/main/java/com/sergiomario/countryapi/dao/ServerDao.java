@@ -225,13 +225,39 @@ public class ServerDao {
 
     }
 
+    public ArrayList<String> getIpTokens(String ip ) {
+
+        ArrayList<String> out = new ArrayList<>();
+
+        try {
+
+            PreparedStatement ps = db.prepareStatement("SELECT TOKEN FROM TOKENS_USERS WHERE USER_IP = ?");
+            ResultSet rs;
+
+            ps.setString(1, ip);
+
+            rs = ps.executeQuery();
+
+            while(rs.next() ) {
+
+                out.add(rs.getString(1));
+
+            }
+
+        } catch (SQLException ex ) {
+
+        }
+
+        return out;
+    }
+
     public String getUserToken(String ip, String userLogin) {
 
         String out = null;
 
         try {
 
-            PreparedStatement ps = db.prepareStatement("SELECT TOKEN FROM TOKENS_USERS WHERE USER_IP = ? AND ID_USER = ?;");
+            PreparedStatement ps = db.prepareStatement("SELECT TOKEN FROM TOKENS_USERS WHERE USER_IP = ? AND ID_USER = ?");
             ResultSet rs;
 
             ps.setString(1, ip);
@@ -239,11 +265,15 @@ public class ServerDao {
 
             rs = ps.executeQuery();
 
-            out = rs.getString(1);
+            if(rs.next() ) {
+
+                out = rs.getString(1);
+
+            }
 
         } catch (SQLException ex ) {
 
-
+            ex.printStackTrace();
 
         }
 

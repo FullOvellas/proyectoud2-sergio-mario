@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Comparator;
@@ -63,10 +64,10 @@ public class Server {
 
                     String userToken = data.substring(data.indexOf("TOKEN-") + 6);
 
-                    if(checkToken(userToken, paquete.getAddress().getHostAddress(), )) {
+                    if(checkToken(userToken, paquete.getAddress().getHostAddress())) {
 
                         ArrayList<Pais> result = search(data);
-                        enviarPaises(result, paquete.getAddress(), paquete.getPort());º
+                        enviarPaises(result, paquete.getAddress(), paquete.getPort());
 
                     } else {
 
@@ -86,24 +87,17 @@ public class Server {
 
     }
 
-    private static boolean checkToken(String userToken, String ip, String userLogin) {
+    private static boolean checkToken(String userToken, String ip) {
 
-        boolean valid = false;
-        int userId = ServerDao.instance.getUserId(userLogin);
+        if(ip.equals("127.0.0.1") ) {
 
-        if(userId != -1 ) {
-
-            String serverUserToken = ServerDao.instance.getUserToken(ip, userLogin);
-
-            if(serverUserToken != null && serverUserToken.equals(userToken) ) {
-
-                valid = true;
-
-            }
+            ip = "127.0.1.1";
 
         }
 
-        return valid;
+        ArrayList<String> tokens = ServerDao.instance.getIpTokens(ip);
+
+        return tokens.contains(userToken);
     }
 
     private static ArrayList<Pais> search(String data ) {
