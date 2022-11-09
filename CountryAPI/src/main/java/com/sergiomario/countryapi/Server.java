@@ -55,10 +55,17 @@ public class Server {
 
                 socket.receive(paquete);
                 String data = new String(paquete.getData(), paquete.getOffset(), paquete.getLength(), "UTF-8");
+                String packetIp = paquete.getAddress().getHostAddress();
+
+                if(packetIp.startsWith("/") ) {
+
+                    packetIp = packetIp.substring(1);
+
+                }
 
                 if(data.startsWith("PING")) {
 
-                    System.out.println("PING de " + paquete.getAddress());
+                    System.out.println("PING de " + packetIp);
 
                     enviar("PING", paquete.getAddress(), paquete.getPort());
 
@@ -70,7 +77,7 @@ public class Server {
 
                     String userToken = data.substring(data.indexOf("TOKEN-") + 6);
 
-                    if(checkToken(userToken, paquete.getAddress().getHostAddress())) {
+                    if(checkToken(userToken, packetIp)) {
 
                         ArrayList<Pais> result = search(data);
                         enviarPaises(result, paquete.getAddress(), paquete.getPort());
@@ -85,7 +92,7 @@ public class Server {
 
                     String userToken = data.substring(data.indexOf("TOKEN-") + 6);
 
-                    if(checkToken(userToken, paquete.getAddress().getHostAddress())) {
+                    if(checkToken(userToken, packetIp)) {
 
                         String rawString = data.substring(data.indexOf("-") + 1);
 
@@ -266,6 +273,12 @@ public class Server {
             // 127.0.1.1 es loopback de 127.0.0.1
 
             packetIp = "127.0.1.1";
+
+        }
+
+        if (packetIp.startsWith("/") ) {
+
+            packetIp = packetIp.substring(1);
 
         }
 
