@@ -152,7 +152,7 @@ public class ServerDao {
         //TODO: acabar
         try {
 
-            PreparedStatement ps = db.prepareStatement("SELECT ID_PAIS,NOMBRE,NUM_HABITANTES,CAPITAL  FROM PAISES WHERE CAPITAL LIKE ?");
+            PreparedStatement ps = db.prepareStatement("SELECT ID_PAIS,P.NOMBRE,NUM_HABITANTES,CAPITAL FROM PAISES AS P INNER JOIN IDIOMAS_PAISES AS IP ON P.ID_PAIS = IP.PAIS INNER JOIN IDIOMAS AS I ON IP.IDIOMA = I.ID_IDIOMA AND I.NOMBRE LIKE ?");
 
             searchStr = "%" + searchStr + "%";
 
@@ -171,7 +171,7 @@ public class ServerDao {
         ArrayList<String> out = new ArrayList<>();
 
         try {
-                                                                                        // TODO: es PAIS o ID_PAIS ??
+
             PreparedStatement ps = db.prepareStatement("SELECT NOMBRE FROM IDIOMAS AS I INNER JOIN IDIOMAS_PAISES AS IP ON I.ID_IDIOMA = IP.IDIOMA AND IP.PAIS = ?");
             ResultSet rs;
 

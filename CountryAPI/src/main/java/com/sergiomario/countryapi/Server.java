@@ -37,7 +37,7 @@ public class Server {
 
         } catch (SocketException e) {
 
-            System.out.println("**Error al crear el servidor");
+            System.out.println("Error al crear el servidor");
             System.exit(-1);
 
         }
