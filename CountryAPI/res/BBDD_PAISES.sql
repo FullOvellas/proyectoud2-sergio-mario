@@ -3,6 +3,9 @@
 -- Host: localhost    Database: BBDD_PAISES
 -- ------------------------------------------------------
 -- Server version	10.6.7-MariaDB-2ubuntu1.1
+DROP DATABASE IF EXISTS BBDD_PAISES;
+CREATE DATABASE BBDD_PAISES;
+USE BBDD_PAISES;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
