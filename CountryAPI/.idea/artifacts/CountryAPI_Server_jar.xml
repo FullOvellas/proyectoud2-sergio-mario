@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CountryAPI:Server_jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CountryAPI_Server_jar</output-path>
+    <root id="archive" name="CountryAPI.jar">
+      <element id="module-output" name="CountryAPI" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/mysql/mysql-connector-j/8.0.31/mysql-connector-j-8.0.31.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
