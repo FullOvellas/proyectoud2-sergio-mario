@@ -1,19 +1,9 @@
-# PROXECTO ACCESO A DATOS UD1  
+# PROXECTO ACCESO A DATOS UD2
 
-## Participantes  
+## Participantes
 
-- Sergio Alonso Pazo  
-- Mario González Besada  
-
-## Información de la API
-
-Para este programa usamos la API [restcountries.com](https://restcountries.com) v2 y en concreto los siguientes endpoints:  
-
-- **all**: para cuando se quiere guardar la API en cache y así usarla en modo offline  
-- **name**: para buscar un país por su nombre  
-- **currency**: para buscar países por las monedas que utilizan  
-- **capital**: buscando países por su capital  
-- **language**: buscando países por los idiomas utilizados en estos  
+- Sergio Alonso Pazo
+- Mario González Besada
 
 ## Manual técnico  
 
@@ -21,23 +11,23 @@ El código fuente Java de este proyecto está estructurado en un paquete princip
 
 ### ***countryapi***  
 
-Contiene las clases *Main* y *Launcher* para lanzar la aplicación. La función de launcher es iniciar el método *Main.main()* para que sea posible empaquetar el proyecto en un archivo jar.  
+Contiene las clases *Main* y *Launcher* para lanzar la aplicación y la clase *Server*. La función de Launcher es iniciar el método *Main.main()* para que sea posible empaquetar el proyecto en un archivo jar.  
 
 ***Main*** es la clase que inicia la aplicación y contiene el atributo *screenMap* en el que se almacenan cargadas las distintas vistas con las que cuenta la aplicación junto con un nombre que se usa para acceder a ellas y establecerlas como vista activa según requiera el usuario con el método *activate()*.
 
+***Server*** lleva a cabo la verificación de usuarios y también ejecuta las operaciones pertinentes de `ServerDao` en función las órdenes que recibe de `Cliente`.
+
 ### ***model***  
 
-Contiene un único paquete, *country*, en el cual se encuentran los *Plain Old Java Objects* generados mediante el plugin RoboPOJOGenerator de IntelliJ Idea.  
-
-La clase principal del modelo es *Country*, la cual es una clase que únicamente contiene atributos (nombre, continente, población, etc.) y métodos accesores.  
+La clase principal del modelo es `Pais, la cual es una clase que únicamente contiene atributos (nombre, población, idiomas, etc.) y métodos accesores.  
 
 ### ***dao***  
 
-Está compuesto por las clases *Data* y *CountryFetcher*.  
+Está compuesto por las clases *Cliente*, *ServerDao* y *CountryFetcher*.  
 
-- ***Data***: singleton utilizado para gestionar el inicio de sesión.  
-  - *loadCredentials()*: carga del fichero *properties.txt* que el usuario debe introducir para iniciar sesión.  
-- ***CountryFetcher***: contiene métodos estáticos para comprobar la conexión a internet (*checkConnection()*), descargar datos de la API para guardarlos en caché (*fetch()*) y obtener de los archivos guardados objetos *Country* y imágenes de banderas para su uso en los juegos.  
+- ***Cliente***: singleton encargado de la comunicación con `Server`.
+- ***CountryFetcher***: contiene métodos estáticos para obtener objetos `Pais` proporcionados por `Cliente` e imágenes de banderas para su uso en los juegos.
+- ***ServerDao***: singleton que contiene la conexión con la base de datos y ejecuta las consultas.
 
 ### ***controller***  
 
